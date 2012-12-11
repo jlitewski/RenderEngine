@@ -116,9 +116,15 @@ public class KeyboardBuffer implements IManager, IPlugable {
 	}
 
 	@Override
-	public void refresh(IChassis chassis, RefreshReason reason) {
-		// TODO Auto-generated method stub
-		
+	public void refresh(IChassis chassis, RefreshReason reason) { }
+
+	@Override
+	public void cleanup() {
+		this.bufferedIn = null;
+		this.bufferedLast = null;
+		this.bufferedOut = null;
+		this.keyMap = null;
+		this.registeredKeys = null;
 	}
 
 }

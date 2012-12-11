@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.hackhalo2.rendering.interfaces.IManager;
 import com.hackhalo2.rendering.interfaces.ISoundSystem;
 import com.paulscode.sound.FilenameURL;
 import com.paulscode.sound.SoundSystem;
@@ -21,7 +22,7 @@ import com.paulscode.sound.SoundSystemConfig;
  * 
  * @author Jacob "HACKhalo2" Litewski
  */
-public class MIDISoundSystem implements ISoundSystem {
+public class MIDISoundSystem implements ISoundSystem, IManager {
 
 	/**
 	 * The API Version of the implementation

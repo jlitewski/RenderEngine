@@ -1,4 +1,4 @@
-package com.hackhalo2.rendering.interfaces.soundsystem;
+package com.hackhalo2.rendering.interfaces.other;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -10,24 +10,24 @@ import org.lwjgl.util.vector.Vector3f;
  *
  */
 public interface ILocation {
-	
+
 	/**
 	 * Location API Version
 	 */
 	public final int _locationAPIVersion = 1;
-	
+
 	/**
 	 * Sets the Viewers position to the underlying SoundSystem
 	 * @param position The LWJGL Vector of the listener's position
 	 */
 	public void setListenerPosition(Vector3f position);
-	
+
 	/**
 	 * Sets the Viewers Camera Angle to the underlying SoundSystem
 	 * @param angle The LWJGL Vector of the listener's camera angle
 	 */
 	public void setListenerAngle(Vector3f angle);
-	
+
 	/**
 	 * Sets the Viewers Look and Up Orientations to the underlying SoundSystem.<br />
 	 * Note: The Vector's may need to be normalized before passing them into the SoundSystem.<br />
@@ -36,7 +36,7 @@ public interface ILocation {
 	 * @param up The LWJGL Vector of the listener's camera's up angle
 	 */
 	public void setListenerOrientation(Vector3f look, Vector3f up);
-	
+
 	/**
 	 * 
 	 * @param velocity 

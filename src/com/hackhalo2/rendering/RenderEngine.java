@@ -52,7 +52,7 @@ public class RenderEngine {
 
 	/* Render code */
 	public void start() {
-		System.out.println("Initializing the RenderEngine");
+		System.out.println("Initializing the RenderEngine...");
 
 		//set up the reusable iterators
 		Iterator<IPlugable> it1;
@@ -153,19 +153,20 @@ public class RenderEngine {
 			while(it1.hasNext()) (it1.next()).idleRender(this.chassis);
 
 			RenderUtils.updateFPS();
-			RenderUtils.checkGLErrors();
 			Display.sync(RenderUtils.fps);
 		}
 		System.out.println("Shutting down the RenderEngine...");
 
 		//TODO: Internal clean up code here
-
+		it1 = null;
+		it2 = null;
+		
 		//Clean up the Chassis
 		this.chassis.cleanup();
-
+		this.chassis = null;
+		
 		System.out.println("RenderEngine successfully shut down.");
 		running = false;
-
 	}
 
 	public void setWireframeModeEnabled(boolean enabled) {

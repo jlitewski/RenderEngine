@@ -5,25 +5,25 @@ import java.net.URI;
 import org.lwjgl.util.vector.Vector3f;
 
 public interface ISoundSystem {
-	
+
 	/**
 	 * ISoundSystem API version.<br />
 	 * This should not to be confused with the per-implementation API version.
 	 */
 	public final int _coreAPIVersion = 1;
-	
+
 	/**
 	 * The minimum supported ISoundSystem API version this API version supports.<br />
 	 * This should not to be confused with the minimum per-implementation API version.
 	 */
 	public final int _minimumSupportedCoreAPIVersion = 1;
-	
+
 	/**
 	 * Initializes the implementation (if it needs to be). This function should be called in<br />
 	 * any implementation of {@link IChassis#initialize()}, so it shouldn't be called outside of that.
 	 */
 	public void initialize();
-	
+
 	/**
 	 * Queue the sound from the given URI.<br />
 	 * <br />
@@ -38,7 +38,7 @@ public interface ISoundSystem {
 	 * @return the unique soundID, or <b>-1</b> for a failure
 	 */
 	public int queue(URI soundPath, String filename, boolean isLooped, boolean priority);
-	
+
 	/**
 	 * Dequeue the sound from the given unique sound ID.<br />
 	 * Depending on the implementation, this method may fail silently if an exception is thrown.<br />
@@ -47,7 +47,7 @@ public interface ISoundSystem {
 	 * @param soundID The unique sound ID returned from {@link #queue(URI, boolean)}
 	 */
 	public void dequeue(int soundID);
-	
+
 	/**
 	 * Checks to see if the sound from the given unique sound ID is looping.<br />
 	 * Some implementations do not support looping of sounds, so this will always<br />
@@ -57,7 +57,7 @@ public interface ISoundSystem {
 	 * @return <b>true</b> is the sound is looping, <b>false</b> otherwise
 	 */
 	public boolean isLooping(int soundID);
-	
+
 	/**
 	 * Play the sound from the unique sound ID given.<br />
 	 * Depending on the implementation, this method may fail silently if an exception is thrown.<br />
@@ -68,7 +68,7 @@ public interface ISoundSystem {
 	 * @return <b>true</b> is the sound started playing, <b>false</b> otherwise
 	 */
 	public boolean play(int soundID);
-	
+
 	/**
 	 * Check to see if the sound is currently playing. If the unique ID is not valid,<br />
 	 * this function will return <b>false</b>.
@@ -77,7 +77,7 @@ public interface ISoundSystem {
 	 * @return <b>true</b> if the sound is playing, <b>false</b> otherwise
 	 */
 	public boolean isPlaying(int soundID);
-	
+
 	/**
 	 * Pause the sound by the given unique sound ID.<br />
 	 * <br />
@@ -89,7 +89,7 @@ public interface ISoundSystem {
 	 * for invalid soundID.
 	 */
 	public byte pause(int soundID);
-	
+
 	/**
 	 * Check to see if the sound from the given unique sound ID is paused. If the unique ID is not valid,<br />
 	 * this function will return <b>false</b>.
@@ -98,7 +98,7 @@ public interface ISoundSystem {
 	 * @return <b>true</b> if the sound is paused, <b>false</b> otherwise
 	 */
 	public boolean isPaused(int soundID);
-	
+
 	/**
 	 * Resume a paused sound by the given unique sound ID. Some implementations may not support the ability<br />
 	 * to pause sounds, so this will return <b>-1</b> if this is the case.<br />
@@ -108,7 +108,7 @@ public interface ISoundSystem {
 	 * <b>-1</b> for unsupported function.
 	 */
 	public byte resume(int soundID);
-	
+
 	/**
 	 * Mute the sound from the given unique sound ID. If the soundID was invalid,<br />
 	 * this will return <b>-1</b>.
@@ -117,7 +117,7 @@ public interface ISoundSystem {
 	 * @return <b>1</b> if the sound was muted, <b>0</b> if it wasn't, and <b>-1</b> for an invalid soundID.
 	 */
 	public byte mute(int soundID);
-	
+
 	/**
 	 * Checks to see if the sound from the given unique sound ID. Some implementations may not support the<br />
 	 * ability to mute sounds, so this will return <b>false</b> if this is the case.
@@ -126,7 +126,7 @@ public interface ISoundSystem {
 	 * @return <b>true</b> if the sound is muted, <b>false</b> otherwise.
 	 */
 	public boolean isMuted(int soundID);
-	
+
 	/**
 	 * Unmute the sound from the given unique sound ID. If the soundID was invalid,<br />
 	 * this will return <b>-1</b>.
@@ -135,7 +135,7 @@ public interface ISoundSystem {
 	 * @return <b>1</b> if the sound was unmuted, <b>0</b> if it wasn't, and <b>-1</b> for an invalid soundID.
 	 */
 	public byte unmute(int soundID);
-	
+
 	/**
 	 * Get's the current volume of the sound given by the unique sound ID. 
 	 * 
@@ -143,7 +143,7 @@ public interface ISoundSystem {
 	 * @return the current volume of the sound, or <b>-1</b> if the soundID was invalid
 	 */
 	public int getVolume(int soundID);
-	
+
 	/**
 	 * Set the volume of the sound given by the unique sound ID. Please note that different implementations<br />
 	 * will have different ways to clamp the minimum and maximum volume. Some implementations may throw<br />
@@ -153,13 +153,13 @@ public interface ISoundSystem {
 	 * @param volume the new volume value the sound should have
 	 */
 	public void setVolume(int soundID, int volume);
-	
+
 	/**
 	 * Stops the first playing sound. If there are no sounds playing when this function is called,<br />
 	 * it fails silently.
 	 */
 	public void stop();
-	
+
 	/**
 	 * Stop the sound with the unique ID given. If the unique ID is not valid, or the sound is not<br />
 	 * playing, it fails silently.
@@ -167,7 +167,7 @@ public interface ISoundSystem {
 	 * @param soundID the unique sound ID returned from {@link #queue(URI, boolean)}
 	 */
 	public void stop(int soundID);
-	
+
 	/**
 	 * Updates the camera's position for the underlying sound library.<br />
 	 * Note that some implementations may not support this function, which <b>false</b> will be returned<br />
@@ -177,11 +177,5 @@ public interface ISoundSystem {
 	 * @return <b>true</b> if successful, <b>false</b> otherwise
 	 */
 	public boolean setViewerPosition(Vector3f position);
-	
-	/**
-	 * Clean up the implementation. This function should be called in any<br />
-	 * implementation of {@link IChassis#cleanup()}, so it shouldn't be called outside of that.
-	 */
-	public void cleanup();
 
 }

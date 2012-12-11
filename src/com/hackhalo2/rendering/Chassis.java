@@ -4,9 +4,11 @@ import com.hackhalo2.rendering.RenderEngine.PlugMode;
 import com.hackhalo2.rendering.core.MIDISoundSystem;
 import com.hackhalo2.rendering.interfaces.IChassis;
 import com.hackhalo2.rendering.interfaces.IEntityManager;
+import com.hackhalo2.rendering.interfaces.IManager;
 import com.hackhalo2.rendering.interfaces.INetworkManager;
 import com.hackhalo2.rendering.interfaces.ISettingsManager;
 import com.hackhalo2.rendering.interfaces.ISoundSystem;
+import com.hackhalo2.rendering.interfaces.IThreadManager;
 
 public class Chassis implements IChassis {
 	
@@ -15,6 +17,7 @@ public class Chassis implements IChassis {
 	private IEntityManager entityManager = null;
 	private INetworkManager networkManager = null;
 	private ISettingsManager settingsManager = null;
+	private IThreadManager threadManager = null;
 	private RenderEngine renderEngine = null;
 	private CameraManager cameraManager = null;
 	private KeyboardBuffer keyboardBuffer = null;
@@ -85,6 +88,17 @@ public class Chassis implements IChassis {
 	public ISettingsManager getSettingsManager() {
 		return this.settingsManager;
 	}
+	
+	@Override
+	public void setThreadManager(IThreadManager threadManager) {
+		if(!this.finalized) this.threadManager = threadManager;
+		else throw new UnsupportedOperationException("The Chassis has been finalized, you cannot swap systems now");
+	}
+
+	@Override
+	public IThreadManager getThreadManager() {
+		return this.threadManager;
+	}
 
 	@Override
 	public void initialize() {
@@ -107,8 +121,9 @@ public class Chassis implements IChassis {
 	@Override
 	public void cleanup() {
 		// TODO Add cleanup methods to all the underlying interfaces and call it here
-		this.soundSystem.cleanup(); //Cleanup the SoundSystem
-		
+		((IManager)this.soundSystem).cleanup();
+		this.keyboardBuffer.cleanup();
+		this.cameraManager.cleanup();
 	}
 
 }

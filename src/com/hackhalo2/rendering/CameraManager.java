@@ -252,4 +252,11 @@ public class CameraManager implements IManager, IPlugable {
 		this.hudEnabled = hudEnabled;
 	}
 
+	@Override
+	public void cleanup() {
+		this.camera = null;
+		this.guiElements = null;
+		this.secondary = null;
+	}
+
 }

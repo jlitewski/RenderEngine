@@ -27,6 +27,10 @@ public interface IChassis {
 	public void setSettingsManager(ISettingsManager settingsManager);
 	public ISettingsManager getSettingsManager();
 	
+	//Threading System
+	public void setThreadManager(IThreadManager threadManager);
+	public IThreadManager getThreadManager();
+	
 	//initialize
 	public void initialize();
 	
