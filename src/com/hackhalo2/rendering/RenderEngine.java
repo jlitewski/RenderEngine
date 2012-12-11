@@ -34,6 +34,7 @@ public class RenderEngine {
 	private Color clearColor;
 	private final byte floppeldidoppelin = 0;
 	private static boolean running = false;
+	private boolean wireframe = false;
 
 	protected RenderEngine(IChassis chassis) {
 		//Initialize the plugable map
@@ -166,11 +167,16 @@ public class RenderEngine {
 	}
 
 	public void setWireframeModeEnabled(boolean enabled) {
+		this.wireframe = enabled;
 		if(enabled) {
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		} else {
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		}
+	}
+	
+	public boolean isWireframeEnabled() {
+		return this.wireframe;
 	}
 
 	public void setDepthTestingEnabled(boolean enabled) {

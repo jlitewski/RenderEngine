@@ -86,14 +86,6 @@ public class CameraManager implements IManager, IPlugable {
 
 	@Override
 	public void preLogic(IChassis chassis) {
-		//Enable Texturing if not already enabled
-		if(!GL11.glGetBoolean(GL11.GL_TEXTURE_2D)) GL11.glEnable(GL11.GL_TEXTURE_2D);
-		//Enable Alpha if not already enabled
-		if(!GL11.glGetBoolean(GL11.GL_BLEND)) {
-			GL11.glEnable(GL11.GL_BLEND);
-			//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		}
-		
 		if(this.camera != null) this.camera.generateMatrices(); //Generate the primary camera matrices
 
 		Iterator<GUIElement> it = this.guiElements.values().iterator();
@@ -127,10 +119,15 @@ public class CameraManager implements IManager, IPlugable {
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			GL11.glLoadIdentity();
 
-			boolean dte = GL11.glGetBoolean(GL11.GL_DEPTH_TEST); //Depth Testing Enabled
+			final boolean tex = GL11.glGetBoolean(GL11.GL_TEXTURE_2D); //Textures enabled
+			final boolean ble = GL11.glGetBoolean(GL11.GL_BLEND); //Blending enabled
 
-			//Disable Depth Testing
-			if(dte) GL11.glDisable(GL11.GL_DEPTH_TEST);
+			re.setDepthTestingEnabled(false);
+			if(!tex) GL11.glEnable(GL11.GL_TEXTURE_2D); //Enable Textures
+			if(!ble && re.isWireframeEnabled()) { //Enable Alpha Blending
+				GL11.glEnable(GL11.GL_BLEND);
+				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			}
 
 			Iterator<GUIElement> it1 = this.guiElements.values().iterator();
 			while(it1.hasNext()) {
@@ -182,11 +179,10 @@ public class CameraManager implements IManager, IPlugable {
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			GL11.glLoadIdentity();
 
-			if(dte) {
-				GL11.glEnable(GL11.GL_DEPTH_TEST); //Re-enable depth testing if it was enabled before
-				GL11.glDepthFunc(GL11.GL_LEQUAL);
-			}
-
+			//TODO: Have a RenderEngine GLState keep track of this
+			re.setDepthTestingEnabled(true);
+			if(!tex) GL11.glDisable(GL11.GL_TEXTURE_2D); //Disable Textures
+			if(!ble && re.isWireframeEnabled()) GL11.glDisable(GL11.GL_BLEND);
 
 		}
 	}

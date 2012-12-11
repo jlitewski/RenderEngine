@@ -46,7 +46,7 @@ public class Texture2D implements ITexture {
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, this.decoder.getWidth(), this.decoder.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.texData);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.err.println("Exception generated when using the InputStream!");
 			e.printStackTrace();
 		} finally {
@@ -75,7 +75,6 @@ public class Texture2D implements ITexture {
 
 	@Override
 	public void unbind() {
-		GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
