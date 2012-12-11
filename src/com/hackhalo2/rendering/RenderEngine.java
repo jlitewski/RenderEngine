@@ -31,10 +31,12 @@ public class RenderEngine {
 	private Map<PlugMode, TreeSet<IPlugable>> plugableMap = new HashMap<PlugMode, TreeSet<IPlugable>>();
 	private int glClearBit = 0;
 	private boolean vboEnabled = false, colorEnabled = false, normalEnabled = false;
-	private Color clearColor;
+	private Color clearColor = new Color(Color.BLACK);
 	private final byte floppeldidoppelin = 0;
 	private static boolean running = false;
-	private boolean wireframe = false;
+	private boolean wireframe = false, culling = false;
+
+	private int cullingMode = GL11.GL_BACK;
 
 	protected RenderEngine(IChassis chassis) {
 		//Initialize the plugable map
@@ -158,7 +160,7 @@ public class RenderEngine {
 
 		//TODO: Internal clean up code here
 
-		//Clean up the SoundSystem
+		//Clean up the Chassis
 		this.chassis.cleanup();
 
 		System.out.println("RenderEngine successfully shut down.");
@@ -174,9 +176,31 @@ public class RenderEngine {
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		}
 	}
-	
+
 	public boolean isWireframeEnabled() {
 		return this.wireframe;
+	}
+
+	public void setCullingMode(int cullingMode) {
+		this.cullingMode = cullingMode;
+	}
+
+	public void setCullingEnabled(boolean enabled) {
+		this.culling = enabled;
+		if(enabled) {
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glCullFace(this.cullingMode);
+		} else {
+			GL11.glDisable(GL11.GL_CULL_FACE);
+		}
+	}
+
+	public boolean isCullingEnabled() {
+		return this.culling;
+	}
+
+	public void refreshCullingMode() {
+		GL11.glCullFace(this.cullingMode);
 	}
 
 	public void setDepthTestingEnabled(boolean enabled) {

@@ -123,8 +123,9 @@ public class CameraManager implements IManager, IPlugable {
 			final boolean ble = GL11.glGetBoolean(GL11.GL_BLEND); //Blending enabled
 
 			re.setDepthTestingEnabled(false);
+			re.setCullingEnabled(false);
 			if(!tex) GL11.glEnable(GL11.GL_TEXTURE_2D); //Enable Textures
-			if(!ble && re.isWireframeEnabled()) { //Enable Alpha Blending
+			if(!(ble && re.isWireframeEnabled())) { //Enable Alpha Blending
 				GL11.glEnable(GL11.GL_BLEND);
 				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			}
@@ -181,8 +182,9 @@ public class CameraManager implements IManager, IPlugable {
 
 			//TODO: Have a RenderEngine GLState keep track of this
 			re.setDepthTestingEnabled(true);
+			re.setCullingEnabled(true);
 			if(!tex) GL11.glDisable(GL11.GL_TEXTURE_2D); //Disable Textures
-			if(!ble && re.isWireframeEnabled()) GL11.glDisable(GL11.GL_BLEND);
+			if(!(ble && re.isWireframeEnabled())) GL11.glDisable(GL11.GL_BLEND);
 
 		}
 	}
