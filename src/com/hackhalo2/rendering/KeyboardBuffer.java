@@ -13,9 +13,9 @@ import org.lwjgl.input.Mouse;
 
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
-import com.hackhalo2.rendering.interfaces.IChassis;
-import com.hackhalo2.rendering.interfaces.IManager;
-import com.hackhalo2.rendering.interfaces.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IChassis;
+import com.hackhalo2.rendering.interfaces.core.IManager;
+import com.hackhalo2.rendering.interfaces.core.IPlugable;
 
 public class KeyboardBuffer implements IManager, IPlugable {
 

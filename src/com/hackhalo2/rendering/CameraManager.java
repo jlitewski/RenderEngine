@@ -13,11 +13,11 @@ import org.lwjgl.util.glu.GLU;
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.camera.GUIElement;
-import com.hackhalo2.rendering.interfaces.ICamera;
-import com.hackhalo2.rendering.interfaces.IChassis;
-import com.hackhalo2.rendering.interfaces.IManager;
-import com.hackhalo2.rendering.interfaces.IPlugable;
-import com.hackhalo2.rendering.interfaces.ISoundSystem;
+import com.hackhalo2.rendering.interfaces.camera.ICamera;
+import com.hackhalo2.rendering.interfaces.core.IChassis;
+import com.hackhalo2.rendering.interfaces.core.IManager;
+import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.interfaces.sound.ILocation;
 import com.hackhalo2.rendering.util.VBOContainer;
 import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
 
@@ -50,11 +50,11 @@ public class CameraManager implements IManager, IPlugable {
 			this.guiElements.put(element.getName(), element);
 		}
 	}
-	
+
 	public void remove(GUIElement element) {
 		this.removeElementByName(element.getName());
 	}
-	
+
 	public void removeElementByName(String name) {
 		if(this.guiElements.containsKey(name)) {
 			this.guiElements.remove(name);
@@ -200,8 +200,9 @@ public class CameraManager implements IManager, IPlugable {
 
 	@Override
 	public void idleRender(IChassis chassis) {
-		ISoundSystem ss = chassis.getSoundSystem();
-		ss.setViewerPosition(this.camera.getPosition());
+		if(chassis.getSoundSystem() instanceof ILocation) {
+			((ILocation)(chassis.getSoundSystem())).setListenerPosition(this.camera.getPosition());
+		}
 
 		Iterator<GUIElement> it = this.guiElements.values().iterator();
 		while(it.hasNext()) {
@@ -221,7 +222,7 @@ public class CameraManager implements IManager, IPlugable {
 			if(element.isActive()) element.postLogic(chassis);
 		}
 	}
-	
+
 	@Override
 	public void refresh(IChassis chassis, RefreshReason reason) {
 		switch(reason) {
@@ -236,7 +237,7 @@ public class CameraManager implements IManager, IPlugable {
 		default:
 			break;
 		}
-		
+
 	}
 
 	@Override

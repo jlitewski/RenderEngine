@@ -1,4 +1,4 @@
-package com.hackhalo2.rendering.interfaces;
+package com.hackhalo2.rendering.interfaces.core;
 
 import com.hackhalo2.rendering.CameraManager;
 import com.hackhalo2.rendering.KeyboardBuffer;

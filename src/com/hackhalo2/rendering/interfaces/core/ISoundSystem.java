@@ -1,8 +1,6 @@
-package com.hackhalo2.rendering.interfaces;
+package com.hackhalo2.rendering.interfaces.core;
 
 import java.net.URI;
-
-import org.lwjgl.util.vector.Vector3f;
 
 public interface ISoundSystem {
 
@@ -167,15 +165,5 @@ public interface ISoundSystem {
 	 * @param soundID the unique sound ID returned from {@link #queue(URI, boolean)}
 	 */
 	public void stop(int soundID);
-
-	/**
-	 * Updates the camera's position for the underlying sound library.<br />
-	 * Note that some implementations may not support this function, which <b>false</b> will be returned<br />
-	 * or an exception thrown, dependng on the implementation.
-	 * 
-	 * @param position The xyz position of the viewer, using LWJGL's Vector3f class
-	 * @return <b>true</b> if successful, <b>false</b> otherwise
-	 */
-	public boolean setViewerPosition(Vector3f position);
 
 }

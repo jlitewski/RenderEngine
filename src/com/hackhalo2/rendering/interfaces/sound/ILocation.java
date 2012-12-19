@@ -1,4 +1,4 @@
-package com.hackhalo2.rendering.interfaces.other;
+package com.hackhalo2.rendering.interfaces.sound;
 
 import org.lwjgl.util.vector.Vector3f;
 

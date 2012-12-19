@@ -15,7 +15,7 @@ import org.lwjgl.util.glu.GLU;
 
 import com.hackhalo2.rendering.RenderEngine.PlugMode;
 import com.hackhalo2.rendering.exceptions.GLException;
-import com.hackhalo2.rendering.interfaces.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPlugable;
 
 public class RenderUtils {
 	public static int fps = 60; //The Frames per Second the Display will run at

@@ -2,7 +2,7 @@ package com.hackhalo2.rendering.util;
 
 import java.util.Comparator;
 
-import com.hackhalo2.rendering.interfaces.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPlugable;
 
 public class PrioritySorter implements Comparator<IPlugable> {
 

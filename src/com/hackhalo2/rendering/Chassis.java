@@ -1,14 +1,14 @@
 package com.hackhalo2.rendering;
 
 import com.hackhalo2.rendering.RenderEngine.PlugMode;
-import com.hackhalo2.rendering.core.MIDISoundSystem;
-import com.hackhalo2.rendering.interfaces.IChassis;
-import com.hackhalo2.rendering.interfaces.IEntityManager;
-import com.hackhalo2.rendering.interfaces.IManager;
-import com.hackhalo2.rendering.interfaces.INetworkManager;
-import com.hackhalo2.rendering.interfaces.ISettingsManager;
-import com.hackhalo2.rendering.interfaces.ISoundSystem;
-import com.hackhalo2.rendering.interfaces.IThreadManager;
+import com.hackhalo2.rendering.builtin.MIDISoundSystem;
+import com.hackhalo2.rendering.interfaces.core.IChassis;
+import com.hackhalo2.rendering.interfaces.core.IEntityManager;
+import com.hackhalo2.rendering.interfaces.core.IManager;
+import com.hackhalo2.rendering.interfaces.core.INetworkManager;
+import com.hackhalo2.rendering.interfaces.core.ISettingsManager;
+import com.hackhalo2.rendering.interfaces.core.ISoundSystem;
+import com.hackhalo2.rendering.interfaces.core.IThreadManager;
 
 public class Chassis implements IChassis {
 	

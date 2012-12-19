@@ -1,14 +1,12 @@
-package com.hackhalo2.rendering.core;
+package com.hackhalo2.rendering.builtin;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.lwjgl.util.vector.Vector3f;
-
-import com.hackhalo2.rendering.interfaces.IManager;
-import com.hackhalo2.rendering.interfaces.ISoundSystem;
+import com.hackhalo2.rendering.interfaces.core.IManager;
+import com.hackhalo2.rendering.interfaces.core.ISoundSystem;
 import com.paulscode.sound.FilenameURL;
 import com.paulscode.sound.SoundSystem;
 import com.paulscode.sound.SoundSystemConfig;
@@ -214,12 +212,6 @@ public class MIDISoundSystem implements ISoundSystem, IManager {
 		if(this.soundMap.containsKey(soundID)) {
 			this.soundSystem.stop(this.soundMap.get(soundID).getFilename());
 		}
-	}
-	
-	@Override
-	public boolean setViewerPosition(Vector3f position) {
-		this.soundSystem.setListenerPosition(position.x, position.y, position.z);
-		return true;
 	}
 
 	@Override

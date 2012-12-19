@@ -1,4 +1,4 @@
-package com.hackhalo2.rendering.interfaces;
+package com.hackhalo2.rendering.interfaces.camera;
 
 import org.lwjgl.util.vector.Vector3f;
 

@@ -8,8 +8,8 @@ import org.lwjgl.opengl.GL15;
 
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
-import com.hackhalo2.rendering.interfaces.IChassis;
-import com.hackhalo2.rendering.interfaces.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IChassis;
+import com.hackhalo2.rendering.interfaces.core.IPlugable;
 import com.hackhalo2.rendering.util.VBOContainer;
 
 public abstract class RenderPlugable implements IPlugable {

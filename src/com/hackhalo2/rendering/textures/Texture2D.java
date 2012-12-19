@@ -10,11 +10,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.hackhalo2.rendering.interfaces.ITexture;
+import com.hackhalo2.rendering.interfaces.core.ITextured;
 import com.ra4king.opengl.util.PNGDecoder;
 import com.ra4king.opengl.util.PNGDecoder.Format;
 
-public class Texture2D implements ITexture {
+public class Texture2D implements ITextured {
 
 	private int texID;
 	private ByteBuffer texData;

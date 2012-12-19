@@ -1,8 +1,8 @@
-package com.hackhalo2.rendering.interfaces;
+package com.hackhalo2.rendering.interfaces.core;
 
 import org.lwjgl.util.vector.Vector;
 
-public interface ITexture {
+public interface ITextured {
 	
 	public boolean hasAlpha();
 	

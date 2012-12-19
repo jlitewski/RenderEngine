@@ -1,4 +1,4 @@
-package com.hackhalo2.rendering.interfaces;
+package com.hackhalo2.rendering.interfaces.core;
 import com.hackhalo2.rendering.RenderEngine.PlugMode;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 

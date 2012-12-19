@@ -4,7 +4,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.hackhalo2.rendering.KeyboardBuffer;
-import com.hackhalo2.rendering.interfaces.ICamera;
+import com.hackhalo2.rendering.interfaces.camera.ICamera;
 
 public abstract class Camera implements ICamera {
 	
