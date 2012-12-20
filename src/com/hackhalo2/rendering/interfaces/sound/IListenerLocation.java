@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
  * @author Jacob "HACKhalo2" Litewski
  *
  */
-public interface ILocation {
+public interface IListenerLocation {
 
 	/**
 	 * Location API Version

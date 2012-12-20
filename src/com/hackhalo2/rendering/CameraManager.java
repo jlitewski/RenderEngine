@@ -17,7 +17,7 @@ import com.hackhalo2.rendering.interfaces.camera.ICamera;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
 import com.hackhalo2.rendering.interfaces.core.IPlugable;
-import com.hackhalo2.rendering.interfaces.sound.ILocation;
+import com.hackhalo2.rendering.interfaces.sound.IListenerLocation;
 import com.hackhalo2.rendering.util.VBOContainer;
 import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
 
@@ -200,8 +200,8 @@ public class CameraManager implements IManager, IPlugable {
 
 	@Override
 	public void idleRender(IChassis chassis) {
-		if(chassis.getSoundSystem() instanceof ILocation) {
-			((ILocation)(chassis.getSoundSystem())).setListenerPosition(this.camera.getPosition());
+		if(chassis.getSoundSystem() instanceof IListenerLocation) {
+			((IListenerLocation)(chassis.getSoundSystem())).setListenerPosition(this.camera.getPosition());
 		}
 
 		Iterator<GUIElement> it = this.guiElements.values().iterator();

@@ -7,7 +7,7 @@ package com.hackhalo2.rendering.interfaces.sound;
  * @author Jacob "HACKhalo2" Litewski
  *
  */
-public interface IPitch {
+public interface ISoundPitch {
 
 	public final int _pitchAPIVersion = 1;
 	
