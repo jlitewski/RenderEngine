@@ -1,8 +1,8 @@
 package com.hackhalo2.rendering;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -160,11 +160,11 @@ public class RenderEngine {
 		//TODO: Internal clean up code here
 		it1 = null;
 		it2 = null;
-		
+
 		//Clean up the Chassis
 		this.chassis.cleanup();
 		this.chassis = null;
-		
+
 		System.out.println("RenderEngine successfully shut down.");
 		running = false;
 	}
@@ -243,55 +243,39 @@ public class RenderEngine {
 
 	/* Register functions */
 
-	public boolean register(IPlugable object, PlugMode state) {
-		PlugMode[] modes = null;
-		if(state == PlugMode.ALL) {
-			modes = PlugMode.getAllModes();
-		} else if(state == PlugMode.GROUP_LOGIC) {
-			modes = PlugMode.getLogicModes();
-		} else if(state == PlugMode.GROUP_RENDER) {
-			modes = PlugMode.getRenderModes();
-		} else {
-			modes = new PlugMode[] {state};
+	public boolean register(IPlugable object, PlugMode... states) {
+		List<PlugMode> modes = new ArrayList<PlugMode>();
+		//Idiot checking
+		for(PlugMode state : states) {
+			if(state == PlugMode.ALL) { //Add ALL the modes!
+				for(PlugMode mode : PlugMode.getAllModes()) {
+					if(!modes.contains(mode)) modes.add(mode);
+				}
+				break; //Since we just added all the modes, break out of this loop
+			} else if(state == PlugMode.GROUP_LOGIC) { //Add the Logic modes
+				for(PlugMode mode : PlugMode.getLogicModes()) {
+					if(!modes.contains(mode)) modes.add(mode);
+				}
+			} else if(state == PlugMode.GROUP_RENDER) { //Add the Render Modes
+				for(PlugMode mode : PlugMode.getRenderModes()) {
+					if(!modes.contains(mode)) modes.add(mode);
+				}
+			} else {
+				if(!modes.contains(state)) modes.add(state);
+			}
 		}
 
 		for(PlugMode mode : modes) {
 			TreeSet<IPlugable> temp = this.plugableMap.get(mode);
-			boolean success = temp.add(object);
-			if(!success) System.err.println("Could not register the Pluggable with PlugMode "+mode.name());
-			this.plugableMap.put(mode, temp);
-		}
-
-		return true;
-	}
-
-	public boolean register(IPlugable object, PlugMode... states) {
-		//Idiot checking
-		for(PlugMode mode : states) {
-			if(mode == PlugMode.ALL || mode == PlugMode.GROUP_LOGIC || mode == PlugMode.GROUP_RENDER) {
-				return this.register(object, mode);
+			if(!temp.contains(object)) { //Don't try adding the object if it already exists
+				//This is also just a sanity check, since it should never happen
+				boolean success = temp.add(object);
+				if(!success) System.err.println("Could not register the Pluggable with PlugMode "+mode.name());
+				this.plugableMap.put(mode, temp);
 			}
 		}
 
-		for(PlugMode mode : states) {
-			TreeSet<IPlugable> temp = this.plugableMap.get(mode);
-			boolean success = temp.add(object);
-			if(!success) System.err.println("Could not register the Pluggable with PlugMode "+mode.name());
-			this.plugableMap.put(mode, temp);
-		}
-
 		return true;
-	}
-
-	public static URI getResourceURI(String location) {
-		URI uri = null;
-		try {
-			uri = RenderUtils.getClassLoader().getResource(location).toURI();
-		} catch (URISyntaxException e) { 
-			e.printStackTrace();
-		}
-
-		return uri;
 	}
 
 	/* Other Functions */
