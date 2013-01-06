@@ -15,9 +15,9 @@ import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
 
-public class KeyboardBuffer implements IManager, IPlugable {
+public class KeyboardBuffer implements IManager, IPluggable {
 
 	private BitSet bufferedIn;
 	private BitSet bufferedOut;

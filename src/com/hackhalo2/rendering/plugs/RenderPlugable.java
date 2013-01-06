@@ -9,10 +9,10 @@ import org.lwjgl.opengl.GL15;
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
 import com.hackhalo2.rendering.util.VBOContainer;
 
-public abstract class RenderPlugable implements IPlugable {
+public abstract class RenderPlugable implements IPluggable {
 
 	protected int vertexHandle; //The Vertex Buffer Object handle
 	protected int colorHandle; //The Color handle

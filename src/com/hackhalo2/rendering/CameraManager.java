@@ -16,12 +16,12 @@ import com.hackhalo2.rendering.camera.GUIElement;
 import com.hackhalo2.rendering.interfaces.camera.ICamera;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
 import com.hackhalo2.rendering.interfaces.sound.IListenerLocation;
 import com.hackhalo2.rendering.util.VBOContainer;
 import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
 
-public class CameraManager implements IManager, IPlugable {
+public class CameraManager implements IManager, IPluggable {
 
 	private ICamera camera;
 	private Map<String, ICamera> secondary;

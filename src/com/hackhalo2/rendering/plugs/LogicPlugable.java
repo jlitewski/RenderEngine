@@ -3,9 +3,9 @@ package com.hackhalo2.rendering.plugs;
 import com.hackhalo2.rendering.RenderEngine.PlugMode;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
 
-public abstract class LogicPlugable implements IPlugable {
+public abstract class LogicPlugable implements IPluggable {
 	
 	protected LogicPlugable() { }
 	
