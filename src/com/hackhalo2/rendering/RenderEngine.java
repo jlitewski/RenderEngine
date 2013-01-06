@@ -1,8 +1,11 @@
 package com.hackhalo2.rendering;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,12 +17,15 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.util.Color;
 
+import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
 import com.hackhalo2.rendering.interfaces.core.IPlugable;
 import com.hackhalo2.rendering.plugs.RenderPlugable;
+import com.hackhalo2.rendering.util.PlugModeSorter;
 import com.hackhalo2.rendering.util.PrioritySorter;
+import com.hackhalo2.rendering.util.TreeSetPlugableSorter;
 import com.hackhalo2.rendering.util.VBOContainer;
 import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
 
@@ -28,7 +34,10 @@ public class RenderEngine {
 	private static Logger _log = Logger.getLogger("RenderEngine");
 	private IChassis chassis = null;
 	public static final boolean _debug = true;
-	private Map<PlugMode, TreeSet<IPlugable>> plugableMap = new HashMap<PlugMode, TreeSet<IPlugable>>();
+	private Map<PlugMode, TreeSet<IPlugable>> oldPlugableMap =
+			new HashMap<PlugMode, TreeSet<IPlugable>>();
+	private Map<Priority, TreeMap<PlugMode, HashSet<Method>>> plugableMap =
+			new TreeMap<Priority, TreeMap<PlugMode, HashSet<Method>>>(new PrioritySorter());
 	private int glClearBit = 0;
 	private boolean vboEnabled = false, colorEnabled = false, normalEnabled = false;
 	private Color clearColor = new Color(Color.BLACK);
@@ -42,15 +51,30 @@ public class RenderEngine {
 		//Initialize the plugable map
 		PlugMode[] modes = PlugMode.values();
 		for(int i = 0; i < modes.length; i++) {
-			TreeSet<IPlugable> temp = this.plugableMap.get(modes[i]);
-			temp = new TreeSet<IPlugable>(new PrioritySorter());
-			this.plugableMap.put(modes[i], temp);
+			TreeSet<IPlugable> temp = this.oldPlugableMap.get(modes[i]);
+			temp = new TreeSet<IPlugable>(new TreeSetPlugableSorter());
+			this.oldPlugableMap.put(modes[i], temp);
+		}
+		
+		for(Priority priority : Priority.values()) {
+			TreeMap<PlugMode, HashSet<Method>> map = this.plugableMap.get(priority);
+			map = new TreeMap<PlugMode, HashSet<Method>>(new PlugModeSorter());
+			for(PlugMode mode : PlugMode.getAllModes()) {
+				HashSet<Method> set = map.get(mode);
+				set = new HashSet<Method>();
+				map.put(mode, set);
+			}
+			this.plugableMap.put(priority, map);
 		}
 
 		this.chassis = chassis;
 	}
 
 	/* Render code */
+	/**
+	 * @deprecated Kept for compatibility. Once newStart is done, switch to that.
+	 */
+	@Deprecated
 	public void start() {
 		System.out.println("Initializing the RenderEngine...");
 
@@ -67,11 +91,11 @@ public class RenderEngine {
 			GL11.glClear(this.glClearBit);
 
 			//Execute the pre-render logic code
-			it1 = this.plugableMap.get(PlugMode.PRE_LOGIC).descendingIterator();
+			it1 = this.oldPlugableMap.get(PlugMode.PRE_LOGIC).descendingIterator();
 			while(it1.hasNext()) (it1.next()).preLogic(this.chassis);
 
 			//Execute the render code per vbo
-			it1 = this.plugableMap.get(PlugMode.PRE_RENDER).descendingIterator();
+			it1 = this.oldPlugableMap.get(PlugMode.PRE_RENDER).descendingIterator();
 			while(it1.hasNext()) {
 				IPlugable plug = it1.next();
 				Set<VBOContainer> vbos = null;
@@ -126,14 +150,14 @@ public class RenderEngine {
 			}
 
 			//Execute the post-render code
-			it1 = this.plugableMap.get(PlugMode.POST_RENDER).descendingIterator();
+			it1 = this.oldPlugableMap.get(PlugMode.POST_RENDER).descendingIterator();
 			while(it1.hasNext()) (it1.next()).postRender(this.chassis);
 
 			//Update the display (switch the buffers and such)
 
 			if(Display.wasResized()) {
 				if(_debug) {
-					it1 = RenderUtils.getIteratorFromComplexMap(this.plugableMap);
+					it1 = RenderUtils.getIteratorFromComplexMap(this.oldPlugableMap);
 					while(it1.hasNext()) {
 						IPlugable plug = it1.next();
 						plug.refresh(this.chassis, RefreshReason.DISPLAY_RESIZED);
@@ -145,11 +169,11 @@ public class RenderEngine {
 			Display.update();
 
 			//Execute the post-render logic code
-			it1 = this.plugableMap.get(PlugMode.POST_LOGIC).descendingIterator();
+			it1 = this.oldPlugableMap.get(PlugMode.POST_LOGIC).descendingIterator();
 			while(it1.hasNext()) (it1.next()).postLogic(this.chassis);
 
 			//Execute the render idle code
-			it1 = this.plugableMap.get(PlugMode.IDLE).descendingIterator();
+			it1 = this.oldPlugableMap.get(PlugMode.IDLE).descendingIterator();
 			while(it1.hasNext()) (it1.next()).idleRender(this.chassis);
 
 			RenderUtils.updateFPS();
@@ -167,6 +191,10 @@ public class RenderEngine {
 
 		System.out.println("RenderEngine successfully shut down.");
 		running = false;
+	}
+	
+	public void newStart() {
+		
 	}
 
 	public void setWireframeModeEnabled(boolean enabled) {
@@ -242,7 +270,7 @@ public class RenderEngine {
 	}
 
 	/* Register functions */
-
+	@Deprecated
 	public boolean register(IPlugable object, PlugMode... states) {
 		List<PlugMode> modes = new ArrayList<PlugMode>();
 		//Idiot checking
@@ -266,15 +294,20 @@ public class RenderEngine {
 		}
 
 		for(PlugMode mode : modes) {
-			TreeSet<IPlugable> temp = this.plugableMap.get(mode);
+			TreeSet<IPlugable> temp = this.oldPlugableMap.get(mode);
 			if(!temp.contains(object)) { //Don't try adding the object if it already exists
 				//This is also just a sanity check, since it should never happen
 				boolean success = temp.add(object);
 				if(!success) System.err.println("Could not register the Pluggable with PlugMode "+mode.name());
-				this.plugableMap.put(mode, temp);
+				this.oldPlugableMap.put(mode, temp);
 			}
 		}
 
+		return true;
+	}
+	
+	public boolean registerNew(IPlugable object) {
+		
 		return true;
 	}
 
@@ -298,12 +331,12 @@ public class RenderEngine {
 
 	public enum PlugMode {
 		//Selective enums
-		PRE_LOGIC,
-		PRE_RENDER,
-		RENDER,
-		POST_RENDER,
-		POST_LOGIC,
-		IDLE,
+		PRE_LOGIC(Priority.HIGHEST),
+		PRE_RENDER(Priority.HIGHER),
+		RENDER(Priority.HIGH),
+		POST_RENDER(Priority.MEDHIGH),
+		POST_LOGIC(Priority.MEDIUM),
+		IDLE(Priority.LOWEST),
 
 		//Group enums
 		GROUP_LOGIC,
@@ -311,6 +344,20 @@ public class RenderEngine {
 
 		//All the enums!
 		ALL;
+		
+		private Priority priority;
+		
+		private PlugMode(Priority p) {
+			this.priority = p;
+		}
+		
+		private PlugMode() {
+			this.priority = Priority.ROCK_BOTTOM;
+		}
+		
+		public Priority getPriority() {
+			return this.priority;
+		}
 
 		public static PlugMode[] getAllModes() {
 			return new PlugMode[] {PRE_LOGIC, PRE_RENDER, RENDER, POST_RENDER, POST_LOGIC, IDLE};
