@@ -13,17 +13,18 @@ import org.lwjgl.input.Mouse;
 
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
+import com.hackhalo2.rendering.interfaces.annotations.Execute;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
 import com.hackhalo2.rendering.interfaces.core.IPluggable;
 
 public class KeyboardBuffer implements IManager, IPluggable {
 
-	private BitSet bufferedIn;
-	private BitSet bufferedOut;
-	private BitSet bufferedLast;
-	private Set<Integer> registeredKeys;
-	private Map<Integer, Integer> keyMap;
+	private BitSet bufferedIn = null;
+	private BitSet bufferedOut = null;
+	private BitSet bufferedLast = null;
+	private Set<Integer> registeredKeys = null;
+	private Map<Integer, Integer> keyMap = null;
 
 	//Prevent Initialization from outside the classpath
 	protected KeyboardBuffer() {
@@ -66,6 +67,7 @@ public class KeyboardBuffer implements IManager, IPluggable {
 	public void postRender(IChassis chassis) { }
 	
 	@Override
+	@Execute
 	public void idleRender(IChassis chassis) {
 		//Poll the registered keys for updates
 		Iterator<Integer> i = this.registeredKeys.iterator(); //Get the registered keyboard keys
@@ -76,6 +78,7 @@ public class KeyboardBuffer implements IManager, IPluggable {
 	}
 	
 	@Override
+	@Execute
 	public void postLogic(IChassis chassis) {
 		//Swap the BitSets
 		BitSet tempOut = this.bufferedOut;

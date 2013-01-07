@@ -12,7 +12,7 @@ import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IPluggable;
 import com.hackhalo2.rendering.util.VBOContainer;
 
-public abstract class RenderPlugable implements IPluggable {
+public abstract class RenderPluggable implements IPluggable {
 
 	protected int vertexHandle; //The Vertex Buffer Object handle
 	protected int colorHandle; //The Color handle
@@ -27,7 +27,7 @@ public abstract class RenderPlugable implements IPluggable {
 
 	private Set<VBOContainer> vbo;
 
-	protected RenderPlugable() {
+	protected RenderPluggable() {
 		this.vertexHandle = GL15.glGenBuffers();
 		this.colorHandle = GL15.glGenBuffers();
 		this.normalHandle = GL15.glGenBuffers();

@@ -9,7 +9,6 @@ import java.util.TreeSet;
 
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
@@ -25,17 +24,12 @@ public class RenderUtils {
 	private static long lastFPS = getTime();
 	private static BitSet supportedFlags = new BitSet();
 	private static int multisamplingSamples;
-	private static DisplayMode[] modes;
 
 	//Prevent Initialization
 	private RenderUtils() { }
 
 	public static ClassLoader getClassLoader() {
 		return RenderUtils.class.getClassLoader();
-	}
-	
-	public static void setDisplayModes(DisplayMode[] displayModes) {
-		RenderUtils.modes = displayModes;
 	}
 
 	public static void checkGLErrors() {
@@ -87,6 +81,7 @@ public class RenderUtils {
 		multisamplingSamples = samples;
 	}
 	
+	@Deprecated
 	protected static Iterator<IPluggable> getIteratorFromComplexMap(Map<PlugMode, TreeSet<IPluggable>> map) {
 		Iterator<IPluggable> it;
 		PlugMode[] modes = PlugMode.getAllModes();

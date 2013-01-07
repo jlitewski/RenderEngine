@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Executable {
-	boolean execute() default true;
+public @interface Execute {
+	boolean executable() default true;
 }

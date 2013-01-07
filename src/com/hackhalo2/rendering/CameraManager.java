@@ -13,6 +13,7 @@ import org.lwjgl.util.glu.GLU;
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.camera.GUIElement;
+import com.hackhalo2.rendering.interfaces.annotations.Execute;
 import com.hackhalo2.rendering.interfaces.camera.ICamera;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
@@ -85,6 +86,7 @@ public class CameraManager implements IManager, IPluggable {
 	}
 
 	@Override
+	@Execute
 	public void preLogic(IChassis chassis) {
 		if(this.camera != null) this.camera.generateMatrices(); //Generate the primary camera matrices
 
@@ -96,6 +98,7 @@ public class CameraManager implements IManager, IPluggable {
 	}
 
 	@Override
+	@Execute
 	public void preRender(IChassis chassis) {
 		//Generate the VBO's for the GUI Elements
 		Iterator<GUIElement> it = this.guiElements.values().iterator();
@@ -106,6 +109,7 @@ public class CameraManager implements IManager, IPluggable {
 	}
 
 	@Override
+	@Execute
 	public void render(IChassis chassis) {
 		RenderEngine re = chassis.getRenderEngine();
 		//Render the Elements
@@ -190,6 +194,7 @@ public class CameraManager implements IManager, IPluggable {
 	}
 
 	@Override
+	@Execute
 	public void postRender(IChassis chassis) {
 		Iterator<GUIElement> it = this.guiElements.values().iterator();
 		while(it.hasNext()) {
@@ -199,6 +204,7 @@ public class CameraManager implements IManager, IPluggable {
 	}
 
 	@Override
+	@Execute
 	public void idleRender(IChassis chassis) {
 		if(chassis.getSoundSystem() instanceof IListenerLocation) {
 			((IListenerLocation)(chassis.getSoundSystem())).setListenerPosition(this.camera.getPosition());
@@ -212,6 +218,7 @@ public class CameraManager implements IManager, IPluggable {
 	}
 
 	@Override
+	@Execute
 	public void postLogic(IChassis chassis) {
 		if(!GL11.glGetBoolean(GL11.GL_TEXTURE_2D)) GL11.glDisable(GL11.GL_TEXTURE_2D);
 		if(this.camera != null) this.camera.applyMatrices();

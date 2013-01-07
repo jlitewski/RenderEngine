@@ -20,12 +20,12 @@ import org.lwjgl.util.Color;
 
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
-import com.hackhalo2.rendering.interfaces.annotations.Executable;
+import com.hackhalo2.rendering.interfaces.annotations.Execute;
 import com.hackhalo2.rendering.interfaces.annotations.PriorityOverride;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
 import com.hackhalo2.rendering.interfaces.core.IPluggable;
-import com.hackhalo2.rendering.plugs.RenderPlugable;
+import com.hackhalo2.rendering.plugs.RenderPluggable;
 import com.hackhalo2.rendering.util.PlugModeSorter;
 import com.hackhalo2.rendering.util.PrioritySorter;
 import com.hackhalo2.rendering.util.TreeSetPlugableSorter;
@@ -108,8 +108,8 @@ public class RenderEngine {
 					plug.preRender(this.chassis);
 					plug.render(this.chassis);
 					continue;
-				} else if(plug instanceof RenderPlugable) {
-					RenderPlugable rPlug = (RenderPlugable)plug; //cast it into a RenderPlugable
+				} else if(plug instanceof RenderPluggable) {
+					RenderPluggable rPlug = (RenderPluggable)plug; //cast it into a RenderPlugable
 					vbos = rPlug.getVBOs(); //set the temporary variable to the VBO's contained in the plug
 					if(rPlug.isDirty()) rPlug.preRender(this.chassis); //Prerender if it's dirty
 				} else {
@@ -185,7 +185,6 @@ public class RenderEngine {
 		}
 		System.out.println("Shutting down the RenderEngine...");
 
-		//TODO: Internal clean up code here
 		it1 = null;
 		it2 = null;
 
@@ -212,9 +211,10 @@ public class RenderEngine {
 
 			for(Priority priority : Priority.values()) {
 				TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
+				if(map.isEmpty()) continue; //Skip processing this Priority Level if the Map is empty
 				for(PlugMode mode : PlugMode.getAllModes()) {
 					HashSet<Pair<Method, IPluggable>> set = map.get(mode);
-					if(set.isEmpty()) continue; //Skip processing if the Set is empty
+					if(set.isEmpty()) continue; //Skip processing this PlugMode if the Set is empty
 					it1 = set.iterator();
 
 					while(it1.hasNext()) {
@@ -231,23 +231,27 @@ public class RenderEngine {
 							case POST_RENDER:
 							case POST_LOGIC:
 							case IDLE:
+								//All of these don't have special processing requirements, so pass the call
 								pair.getFirst().invoke(pair.getSecond(), this.chassis);
 								break;
 
 							case PRE_RENDER:
-								if(pair.getSecond() instanceof RenderPlugable) {
-									RenderPlugable rPlug = (RenderPlugable)pair.getSecond();
+
+								if(pair.getSecond() instanceof RenderPluggable) {
+									RenderPluggable rPlug = (RenderPluggable)pair.getSecond();
 									if(rPlug.isDirty()) pair.getFirst().invoke(pair.getSecond(), this.chassis);
 								} else pair.getFirst().invoke(pair.getSecond(), this.chassis);
 								break;
 
 							case RENDER:
+								//Render the object directly
 								Set<VBOContainer> vbos = null;
-								if(pair.getSecond() instanceof RenderPlugable) {
-									RenderPlugable rPlug = (RenderPlugable)pair.getSecond();
-									vbos = rPlug.getVBOs();
+								if(pair.getSecond() instanceof RenderPluggable) {
+									RenderPluggable rPlug = (RenderPluggable)pair.getSecond();
+									vbos = rPlug.getVBOs(); //Get the VBOs
 									if(this.vboEnabled && !vbos.isEmpty()) { //Failsafe check
 										it2 = vbos.iterator();
+										//Cycle through all the VBO types
 										while(it2.hasNext()) {
 											VBOContainer vbo = it2.next();
 											GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo.getHandle());
@@ -271,12 +275,15 @@ public class RenderEngine {
 											GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 										}
 
+										//Enable the client states
 										GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 										if(this.colorEnabled) GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
 										if(this.normalEnabled) GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 
+										//Render
 										pair.getFirst().invoke(pair.getSecond(), this.chassis);
 
+										//Disable the client states
 										if(this.normalEnabled) GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
 										if(this.colorEnabled) GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
 										GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
@@ -295,16 +302,16 @@ public class RenderEngine {
 					}
 				}
 			}
-
-			if(Display.wasResized())
-				GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+			
+			//Resize the viewport if the Display was resized
+			if(Display.wasResized()) GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 
 			Display.update();
 			RenderUtils.updateFPS();
 			Display.sync(RenderUtils.fps);
 		}
 		System.out.println("Shutting down the RenderEngine...");
-		
+
 		it1 = null;
 		it2 = null;
 
@@ -429,9 +436,9 @@ public class RenderEngine {
 		try {
 			Method[] methods = Class.forName(object.getClass().getName()).getMethods();
 			for(Method method : methods) {
-				Executable exe = method.getAnnotation(Executable.class);
+				Execute exe = method.getAnnotation(Execute.class);
 				if(exe == null) continue;
-				else if(exe.execute()) {
+				else if(exe.executable()) {
 					PlugMode mode = PlugMode.getByName(method.getName());
 					if(mode == null) continue;
 
