@@ -1,9 +1,9 @@
 package com.hackhalo2.rendering;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -14,21 +14,26 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.util.Color;
 
-import com.hackhalo2.rendering.RenderUtils.RefreshReason;
+import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
+import com.hackhalo2.rendering.interfaces.annotations.Execute;
+import com.hackhalo2.rendering.interfaces.annotations.PriorityOverride;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
-import com.hackhalo2.rendering.plugs.RenderPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
+import com.hackhalo2.rendering.plugs.RenderPluggable;
+import com.hackhalo2.rendering.util.PlugModeSorter;
 import com.hackhalo2.rendering.util.PrioritySorter;
 import com.hackhalo2.rendering.util.VBOContainer;
 import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
+import com.hackhalo2.util.Pair;
 
 public class RenderEngine {
 
 	private static Logger _log = Logger.getLogger("RenderEngine");
 	private IChassis chassis = null;
 	public static final boolean _debug = true;
-	private Map<PlugMode, TreeSet<IPlugable>> plugableMap = new HashMap<PlugMode, TreeSet<IPlugable>>();
+	private Map<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>> pluggableMap =
+			new TreeMap<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>>(new PrioritySorter());
 	private int glClearBit = 0;
 	private boolean vboEnabled = false, colorEnabled = false, normalEnabled = false;
 	private Color clearColor = new Color(Color.BLACK);
@@ -39,12 +44,17 @@ public class RenderEngine {
 	private int cullingMode = GL11.GL_BACK;
 
 	protected RenderEngine(IChassis chassis) {
+		if(_debug) System.out.println("Debug Mode Active");
 		//Initialize the plugable map
-		PlugMode[] modes = PlugMode.values();
-		for(int i = 0; i < modes.length; i++) {
-			TreeSet<IPlugable> temp = this.plugableMap.get(modes[i]);
-			temp = new TreeSet<IPlugable>(new PrioritySorter());
-			this.plugableMap.put(modes[i], temp);
+		for(Priority priority : Priority.values()) {
+			TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
+			map = new TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>(new PlugModeSorter());
+			for(PlugMode mode : PlugMode.getAllModes()) {
+				HashSet<Pair<Method, IPluggable>> set = map.get(mode);
+				set = new HashSet<Pair<Method, IPluggable>>();
+				map.put(mode, set);
+			}
+			this.pluggableMap.put(priority, map);
 		}
 
 		this.chassis = chassis;
@@ -54,110 +64,119 @@ public class RenderEngine {
 	public void start() {
 		System.out.println("Initializing the RenderEngine...");
 
-		//set up the reusable iterators
-		Iterator<IPlugable> it1;
+		Iterator<Pair<Method, IPluggable>> it1;
 		Iterator<VBOContainer> it2;
 
 		running = true;
 		while(!Display.isCloseRequested() && !RenderUtils.error) {
-
 			GL11.glClearColor(this.clearColor.getRed(), this.clearColor.getGreen(), this.clearColor.getBlue(), this.clearColor.getAlpha());
 
 			//Clear the bits set to be cleared
 			GL11.glClear(this.glClearBit);
 
-			//Execute the pre-render logic code
-			it1 = this.plugableMap.get(PlugMode.PRE_LOGIC).descendingIterator();
-			while(it1.hasNext()) (it1.next()).preLogic(this.chassis);
+			for(Priority priority : Priority.values()) {
+				TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
+				if(map.isEmpty()) continue; //Skip processing this Priority Level if the Map is empty
+				for(PlugMode mode : PlugMode.getAllModes()) {
+					HashSet<Pair<Method, IPluggable>> set = map.get(mode);
+					if(set.isEmpty()) continue; //Skip processing this PlugMode if the Set is empty
+					it1 = set.iterator();
 
-			//Execute the render code per vbo
-			it1 = this.plugableMap.get(PlugMode.PRE_RENDER).descendingIterator();
-			while(it1.hasNext()) {
-				IPlugable plug = it1.next();
-				Set<VBOContainer> vbos = null;
-				if(plug instanceof IManager) {
-					//Pass the render logic directly to the manager
-					plug.preRender(this.chassis);
-					plug.render(this.chassis);
-					continue;
-				} else if(plug instanceof RenderPlugable) {
-					RenderPlugable rPlug = (RenderPlugable)plug; //cast it into a RenderPlugable
-					vbos = rPlug.getVBOs(); //set the temporary variable to the VBO's contained in the plug
-					if(rPlug.isDirty()) rPlug.preRender(this.chassis); //Prerender if it's dirty
-				} else {
-					plug.preRender(this.chassis);
-				}
-
-				if(this.vboEnabled && !vbos.isEmpty()) { //Failsafe check
-					it2 = vbos.iterator();
-					while(it2.hasNext()) {
-						VBOContainer vbo = it2.next();
-						GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo.getHandle());
-						switch(vbo.getType()) {
-						case NORMAL:
-							if(vbo.getType() != ContainerType.NORMAL) throw new RuntimeException("VBO type mismatch! (Expected NORMAL, got "+ vbo.getType().toString()+")");
-							GL11.glNormalPointer(GL11.GL_FLOAT, vbo.getStride(0), 0L);
-							break;
-						case COLOR:
-							if(vbo.getType() != ContainerType.COLOR) throw new RuntimeException("VBO type mismatch! (Expected COLOR, got "+ vbo.getType().toString()+")");
-							GL11.glColorPointer(vbo.getSize(), GL11.GL_FLOAT, vbo.getStride(0), 0L);
-							break;
-						case VERTEX:
-							if(vbo.getType() != ContainerType.VERTEX) throw new RuntimeException("VBO type mismatch! (Expected VERTEX, got "+ vbo.getType().toString()+")");
-							GL11.glVertexPointer(vbo.getSize(), GL11.GL_FLOAT, vbo.getStride(0), 0L);
-							break;
-						default:
-							throw new RuntimeException("Undefined or unsupported vbo type!");
-						}
-						GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-					}
-
-					GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-					if(this.colorEnabled) GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-					if(this.normalEnabled) GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-
-					plug.render(this.chassis);
-					RenderUtils.checkGLErrors();
-
-					if(this.normalEnabled) GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-					if(this.colorEnabled) GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
-					GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-				}
-			}
-
-			//Execute the post-render code
-			it1 = this.plugableMap.get(PlugMode.POST_RENDER).descendingIterator();
-			while(it1.hasNext()) (it1.next()).postRender(this.chassis);
-
-			//Update the display (switch the buffers and such)
-
-			if(Display.wasResized()) {
-				if(_debug) {
-					it1 = RenderUtils.getIteratorFromComplexMap(this.plugableMap);
 					while(it1.hasNext()) {
-						IPlugable plug = it1.next();
-						plug.refresh(this.chassis, RefreshReason.DISPLAY_RESIZED);
+						Pair<Method, IPluggable> pair = it1.next();
+						try {
+							//Pass the call to the Manager and process the next pair, if any are left
+							if(pair.getSecond() instanceof IManager) {
+								pair.getFirst().invoke(pair.getSecond(), this.chassis);
+								continue;
+							}
+
+							switch(mode) {
+							case PRE_LOGIC:
+							case POST_RENDER:
+							case POST_LOGIC:
+							case IDLE:
+								//All of these don't have special processing requirements, so pass the call
+								pair.getFirst().invoke(pair.getSecond(), this.chassis);
+								break;
+
+							case PRE_RENDER:
+
+								if(pair.getSecond() instanceof RenderPluggable) {
+									RenderPluggable rPlug = (RenderPluggable)pair.getSecond();
+									if(rPlug.isDirty()) pair.getFirst().invoke(pair.getSecond(), this.chassis);
+								} else pair.getFirst().invoke(pair.getSecond(), this.chassis);
+								break;
+
+							case RENDER:
+								//Render the object directly
+								Set<VBOContainer> vbos = null;
+								if(pair.getSecond() instanceof RenderPluggable) {
+									RenderPluggable rPlug = (RenderPluggable)pair.getSecond();
+									vbos = rPlug.getVBOs(); //Get the VBOs
+									if(this.vboEnabled && !vbos.isEmpty()) { //Failsafe check
+										it2 = vbos.iterator();
+										//Cycle through all the VBO types
+										while(it2.hasNext()) {
+											VBOContainer vbo = it2.next();
+											GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo.getHandle());
+
+											switch(vbo.getType()) {
+											case NORMAL:
+												if(vbo.getType() != ContainerType.NORMAL) throw new RuntimeException("VBO type mismatch! (Expected NORMAL, got "+ vbo.getType().toString()+")");
+												GL11.glNormalPointer(GL11.GL_FLOAT, vbo.getStride(0), 0L);
+												break;
+											case COLOR:
+												if(vbo.getType() != ContainerType.COLOR) throw new RuntimeException("VBO type mismatch! (Expected COLOR, got "+ vbo.getType().toString()+")");
+												GL11.glColorPointer(vbo.getSize(), GL11.GL_FLOAT, vbo.getStride(0), 0L);
+												break;
+											case VERTEX:
+												if(vbo.getType() != ContainerType.VERTEX) throw new RuntimeException("VBO type mismatch! (Expected VERTEX, got "+ vbo.getType().toString()+")");
+												GL11.glVertexPointer(vbo.getSize(), GL11.GL_FLOAT, vbo.getStride(0), 0L);
+												break;
+											default:
+												throw new RuntimeException("Undefined or unsupported vbo type!");
+											}
+											GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+										}
+
+										//Enable the client states
+										GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+										if(this.colorEnabled) GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+										if(this.normalEnabled) GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+
+										//Render
+										pair.getFirst().invoke(pair.getSecond(), this.chassis);
+
+										//Disable the client states
+										if(this.normalEnabled) GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+										if(this.colorEnabled) GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
+										GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+									}
+								} else pair.getFirst().invoke(pair.getSecond(), this.chassis);
+								break;
+
+							default:
+								pair.getFirst().invoke(pair.getSecond(), this.chassis);
+								break;
+							}
+							RenderUtils.checkGLErrors();
+						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							throw new RuntimeException(e);
+						}
 					}
 				}
-				GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 			}
+
+			//Resize the viewport if the Display was resized
+			if(Display.wasResized()) GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 
 			Display.update();
-
-			//Execute the post-render logic code
-			it1 = this.plugableMap.get(PlugMode.POST_LOGIC).descendingIterator();
-			while(it1.hasNext()) (it1.next()).postLogic(this.chassis);
-
-			//Execute the render idle code
-			it1 = this.plugableMap.get(PlugMode.IDLE).descendingIterator();
-			while(it1.hasNext()) (it1.next()).idleRender(this.chassis);
-
 			RenderUtils.updateFPS();
 			Display.sync(RenderUtils.fps);
 		}
 		System.out.println("Shutting down the RenderEngine...");
 
-		//TODO: Internal clean up code here
 		it1 = null;
 		it2 = null;
 
@@ -213,7 +232,7 @@ public class RenderEngine {
 		}
 	}
 
-	public void setVertexEnabled(boolean enabled) {
+	public void setRenderEnabled(boolean enabled) {
 		this.vboEnabled = enabled;
 	}
 
@@ -242,38 +261,39 @@ public class RenderEngine {
 	}
 
 	/* Register functions */
+	public boolean register(IPluggable object) {
+		System.out.println("Registering new Plug '"+object.getName()+"'...");
+		try {
+			Method[] methods = Class.forName(object.getClass().getName()).getMethods();
+			for(Method method : methods) {
+				Execute exe = method.getAnnotation(Execute.class);
+				if(exe == null) continue;
+				else if(exe.executable()) {
+					PlugMode mode = PlugMode.getByName(method.getName());
+					if(mode == null) continue;
 
-	public boolean register(IPlugable object, PlugMode... states) {
-		List<PlugMode> modes = new ArrayList<PlugMode>();
-		//Idiot checking
-		for(PlugMode state : states) {
-			if(state == PlugMode.ALL) { //Add ALL the modes!
-				for(PlugMode mode : PlugMode.getAllModes()) {
-					if(!modes.contains(mode)) modes.add(mode);
-				}
-				break; //Since we just added all the modes, break out of this loop
-			} else if(state == PlugMode.GROUP_LOGIC) { //Add the Logic modes
-				for(PlugMode mode : PlugMode.getLogicModes()) {
-					if(!modes.contains(mode)) modes.add(mode);
-				}
-			} else if(state == PlugMode.GROUP_RENDER) { //Add the Render Modes
-				for(PlugMode mode : PlugMode.getRenderModes()) {
-					if(!modes.contains(mode)) modes.add(mode);
-				}
-			} else {
-				if(!modes.contains(state)) modes.add(state);
-			}
-		}
+					Priority priority = object.getPriority();
+					PriorityOverride override = method.getAnnotation(PriorityOverride.class);
+					if(override != null) priority = override.priority();
+					if(_debug) System.out.println("Registering PlugMode '"+mode.name +"' with "+priority.name()+" Priority");
+					
+					//Tear apart the Map and set the Pair
+					TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
+					HashSet<Pair<Method, IPluggable>> set = map.get(mode);
+					Pair<Method, IPluggable> pair = new Pair<Method, IPluggable>(method, object);
 
-		for(PlugMode mode : modes) {
-			TreeSet<IPlugable> temp = this.plugableMap.get(mode);
-			if(!temp.contains(object)) { //Don't try adding the object if it already exists
-				//This is also just a sanity check, since it should never happen
-				boolean success = temp.add(object);
-				if(!success) System.err.println("Could not register the Pluggable with PlugMode "+mode.name());
-				this.plugableMap.put(mode, temp);
+					//Build the Map
+					set.add(pair);
+					map.put(mode, set);
+					this.pluggableMap.put(priority, map);
+				}
 			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
 		}
+		
+		if(_debug) System.out.println("Plug '"+object.getName()+"' registered sucessfully.");
 
 		return true;
 	}
@@ -298,12 +318,12 @@ public class RenderEngine {
 
 	public enum PlugMode {
 		//Selective enums
-		PRE_LOGIC,
-		PRE_RENDER,
-		RENDER,
-		POST_RENDER,
-		POST_LOGIC,
-		IDLE,
+		PRE_LOGIC("preLogic", Priority.HIGHEST),
+		PRE_RENDER("preRender", Priority.HIGHER),
+		RENDER("render", Priority.HIGH),
+		POST_RENDER("postRender", Priority.MEDHIGH),
+		POST_LOGIC("postLogic", Priority.MEDIUM),
+		IDLE("idleRender", Priority.LOWEST),
 
 		//Group enums
 		GROUP_LOGIC,
@@ -311,6 +331,35 @@ public class RenderEngine {
 
 		//All the enums!
 		ALL;
+
+		private Priority priority;
+		private String name;
+
+		private PlugMode(String name, Priority p) {
+			this.name = name;
+			this.priority = p;
+		}
+
+		private PlugMode(String name) {
+			this.name = name;
+			this.priority = Priority.ROCK_BOTTOM;
+		}
+
+		private PlugMode() {
+			this.name = "";
+			this.priority = Priority.ROCK_BOTTOM;
+		}
+
+		public Priority getPriority() {
+			return this.priority;
+		}
+
+		public static PlugMode getByName(String name) {
+			for(PlugMode mode : PlugMode.getAllModes()) {
+				if(mode.name.equals(name)) return mode;
+			}
+			return null;
+		}
 
 		public static PlugMode[] getAllModes() {
 			return new PlugMode[] {PRE_LOGIC, PRE_RENDER, RENDER, POST_RENDER, POST_LOGIC, IDLE};

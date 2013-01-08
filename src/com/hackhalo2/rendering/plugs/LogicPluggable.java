@@ -1,17 +1,22 @@
 package com.hackhalo2.rendering.plugs;
 
-import com.hackhalo2.rendering.RenderEngine.PlugMode;
+import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
 
-public abstract class LogicPlugable implements IPlugable {
-	
-	protected LogicPlugable() { }
-	
+public abstract class LogicPluggable implements IPluggable {
+	private Priority priority = Priority.NORMAL;
+
+	protected LogicPluggable() { }
+
 	@Override
-	public PlugMode.Priority getPriority() {
-		return PlugMode.Priority.HIGH;
+	public Priority getPriority() {
+		return priority;
+	}
+
+	protected void setPriority(Priority priority) {
+		this.priority = priority;
 	}
 
 	@Override
@@ -31,8 +36,11 @@ public abstract class LogicPlugable implements IPlugable {
 
 	@Override
 	public abstract void postLogic(IChassis chassis);
-	
+
+	@Override
+	public abstract String getName();
+
 	@Override
 	public void refresh(IChassis chassis, RefreshReason reason) { }
-	
+
 }
