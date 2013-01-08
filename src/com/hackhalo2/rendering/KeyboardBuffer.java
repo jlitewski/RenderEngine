@@ -130,4 +130,9 @@ public class KeyboardBuffer implements IManager, IPluggable {
 		this.registeredKeys = null;
 	}
 
+	@Override
+	public String getName() {
+		return "KeyboardBuffer";
+	}
+
 }

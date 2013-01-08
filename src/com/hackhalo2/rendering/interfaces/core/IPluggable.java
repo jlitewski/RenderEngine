@@ -12,6 +12,7 @@ public interface IPluggable {
 	public void idleRender(IChassis chassis);
 	
 	public void refresh(IChassis chassis, RefreshReason reason);
+	public String getName();
 	
 	public PlugMode.Priority getPriority();
 	

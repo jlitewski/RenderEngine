@@ -61,6 +61,9 @@ public abstract class RenderPluggable implements IPluggable {
 	public void postLogic(IChassis chassis) { }
 	
 	@Override
+	public abstract String getName();
+	
+	@Override
 	public void refresh(IChassis chassis, RefreshReason reason) {
 		switch(reason) {
 		case DISPLAY_RESIZED:
@@ -72,7 +75,7 @@ public abstract class RenderPluggable implements IPluggable {
 		}
 	}
 
-	protected void register(Set<VBOContainer> vbo) { this.vbo = vbo; }
+	protected void setVBOs(Set<VBOContainer> vbo) { this.vbo = vbo; }
 
 	public Set<VBOContainer> getVBOs() {
 		if(this.vbo != null) return Collections.unmodifiableSet(this.vbo);

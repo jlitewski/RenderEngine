@@ -267,4 +267,9 @@ public class CameraManager implements IManager, IPluggable {
 		this.secondary = null;
 	}
 
+	@Override
+	public String getName() {
+		return "CameraManager";
+	}
+
 }

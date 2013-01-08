@@ -115,8 +115,8 @@ public class Chassis implements IChassis {
 		//Register things with the RenderEngine
 		//this.renderEngine.register(this.cameraManager, PlugMode.ALL);
 		//this.renderEngine.register(this.keyboardBuffer, PlugMode.ALL);
-		this.renderEngine.registerNew(this.cameraManager);
-		this.renderEngine.registerNew(this.keyboardBuffer);
+		this.renderEngine.register(this.cameraManager);
+		this.renderEngine.register(this.keyboardBuffer);
 	}
 
 	@Override

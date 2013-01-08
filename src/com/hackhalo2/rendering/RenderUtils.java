@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.lwjgl.Sys;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
@@ -54,7 +53,7 @@ public class RenderUtils {
 
 	public static void updateFPS() {
 		if (getTime() - lastFPS > 1000) {
-			Display.setTitle("Sandbox: "+counter+" FPS");
+			//Display.setTitle(Display.getTitle()+": "+counter+" FPS");
 			counter = 0;
 			lastFPS += 1000;
 		}

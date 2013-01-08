@@ -7,14 +7,14 @@ import com.hackhalo2.rendering.interfaces.core.IPluggable;
 
 public abstract class LogicPluggable implements IPluggable {
 	private Priority priority = Priority.NORMAL;
-	
+
 	protected LogicPluggable() { }
-	
+
 	@Override
 	public Priority getPriority() {
 		return priority;
 	}
-	
+
 	protected void setPriority(Priority priority) {
 		this.priority = priority;
 	}
@@ -36,8 +36,11 @@ public abstract class LogicPluggable implements IPluggable {
 
 	@Override
 	public abstract void postLogic(IChassis chassis);
-	
+
+	@Override
+	public abstract String getName();
+
 	@Override
 	public void refresh(IChassis chassis, RefreshReason reason) { }
-	
+
 }
