@@ -9,10 +9,10 @@ import org.lwjgl.opengl.GL15;
 import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 import com.hackhalo2.rendering.RenderUtils.RefreshReason;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
 import com.hackhalo2.rendering.util.VBOContainer;
 
-public abstract class RenderPlugable implements IPlugable {
+public abstract class RenderPluggable implements IPluggable {
 
 	protected int vertexHandle; //The Vertex Buffer Object handle
 	protected int colorHandle; //The Color handle
@@ -27,7 +27,7 @@ public abstract class RenderPlugable implements IPlugable {
 
 	private Set<VBOContainer> vbo;
 
-	protected RenderPlugable() {
+	protected RenderPluggable() {
 		this.vertexHandle = GL15.glGenBuffers();
 		this.colorHandle = GL15.glGenBuffers();
 		this.normalHandle = GL15.glGenBuffers();
@@ -61,6 +61,9 @@ public abstract class RenderPlugable implements IPlugable {
 	public void postLogic(IChassis chassis) { }
 	
 	@Override
+	public abstract String getName();
+	
+	@Override
 	public void refresh(IChassis chassis, RefreshReason reason) {
 		switch(reason) {
 		case DISPLAY_RESIZED:
@@ -72,7 +75,7 @@ public abstract class RenderPlugable implements IPlugable {
 		}
 	}
 
-	protected void register(Set<VBOContainer> vbo) { this.vbo = vbo; }
+	protected void setVBOs(Set<VBOContainer> vbo) { this.vbo = vbo; }
 
 	public Set<VBOContainer> getVBOs() {
 		if(this.vbo != null) return Collections.unmodifiableSet(this.vbo);

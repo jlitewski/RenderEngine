@@ -1,6 +1,5 @@
 package com.hackhalo2.rendering;
 
-import com.hackhalo2.rendering.RenderEngine.PlugMode;
 import com.hackhalo2.rendering.builtin.MIDISoundSystem;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IEntityManager;
@@ -114,8 +113,10 @@ public class Chassis implements IChassis {
 		this.renderEngine = new RenderEngine(this);
 		
 		//Register things with the RenderEngine
-		this.renderEngine.register(this.cameraManager, PlugMode.ALL);
-		this.renderEngine.register(this.keyboardBuffer, PlugMode.ALL);
+		//this.renderEngine.register(this.cameraManager, PlugMode.ALL);
+		//this.renderEngine.register(this.keyboardBuffer, PlugMode.ALL);
+		this.renderEngine.register(this.cameraManager);
+		this.renderEngine.register(this.keyboardBuffer);
 	}
 
 	@Override

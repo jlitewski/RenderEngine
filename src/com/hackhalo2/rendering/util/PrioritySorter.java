@@ -2,15 +2,15 @@ package com.hackhalo2.rendering.util;
 
 import java.util.Comparator;
 
-import com.hackhalo2.rendering.interfaces.core.IPlugable;
+import com.hackhalo2.rendering.RenderEngine.PlugMode.Priority;
 
-public class PrioritySorter implements Comparator<IPlugable> {
-
+public class PrioritySorter implements Comparator<Priority> {
+	
 	public PrioritySorter() { }
 
 	@Override
-	public int compare(IPlugable o1, IPlugable o2) {
-		return o1.getPriority().getLevel() - o2.getPriority().getLevel();
+	public int compare(Priority one, Priority two) {
+		return one.getLevel() - two.getLevel();
 	}
 
 }
