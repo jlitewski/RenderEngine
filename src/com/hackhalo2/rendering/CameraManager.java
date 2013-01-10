@@ -29,6 +29,7 @@ public class CameraManager implements IManager, IPluggable {
 	private Map<String, GUIElement> guiElements;
 	private boolean hudEnabled = true;
 	private final Priority priority = Priority.LOWEST;
+	private boolean enabled = true;
 
 	public CameraManager() {
 		this.secondary = new HashMap<String, ICamera>();
@@ -83,6 +84,16 @@ public class CameraManager implements IManager, IPluggable {
 
 	public ICamera getActiveCamera() {
 		return this.camera;
+	}
+	
+	@Override
+	public void setEnabled(final boolean flag) {
+		this.enabled  = flag;
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 
 	@Override

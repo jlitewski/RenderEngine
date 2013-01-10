@@ -7,6 +7,7 @@ import com.hackhalo2.rendering.interfaces.core.IPluggable;
 
 public abstract class LogicPluggable implements IPluggable {
 	private Priority priority = Priority.NORMAL;
+	private boolean enabled = true;
 
 	protected LogicPluggable() { }
 
@@ -17,6 +18,16 @@ public abstract class LogicPluggable implements IPluggable {
 
 	protected void setPriority(Priority priority) {
 		this.priority = priority;
+	}
+	
+	@Override
+	public void setEnabled(final boolean flag) {
+		this.enabled = flag;
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 
 	@Override

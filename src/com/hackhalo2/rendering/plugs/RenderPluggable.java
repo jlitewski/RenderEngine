@@ -26,6 +26,7 @@ public abstract class RenderPluggable implements IPluggable {
 	private Priority priority = Priority.NORMAL;
 
 	private Set<VBOContainer> vbo;
+	private boolean enabled = true;
 
 	protected RenderPluggable() {
 		this.vertexHandle = GL15.glGenBuffers();
@@ -40,6 +41,16 @@ public abstract class RenderPluggable implements IPluggable {
 	@Override
 	public Priority getPriority() {
 		return this.priority;
+	}
+	
+	@Override
+	public void setEnabled(final boolean flag) {
+		this.enabled  = flag;
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 
 	@Override

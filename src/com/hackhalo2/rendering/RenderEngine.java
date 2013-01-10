@@ -34,6 +34,7 @@ public class RenderEngine {
 	public static final boolean _debug = true;
 	private Map<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>> pluggableMap =
 			new TreeMap<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>>(new PrioritySorter());
+	private Set<IPluggable> enabledPlugs = new HashSet<IPluggable>();
 	private int glClearBit = 0;
 	private boolean vboEnabled = false, colorEnabled = false, normalEnabled = false;
 	private Color clearColor = new Color(Color.BLACK);
@@ -84,6 +85,8 @@ public class RenderEngine {
 
 					while(it1.hasNext()) {
 						Pair<Method, IPluggable> pair = it1.next();
+						if(!pair.getSecond().isEnabled()) continue; //TODO Move this up the for loop chain
+
 						try {
 							//Pass the call to the Manager and process the next pair, if any are left
 							if(pair.getSecond() instanceof IManager) {
@@ -187,7 +190,19 @@ public class RenderEngine {
 		System.out.println("RenderEngine successfully shut down.");
 		running = false;
 	}
+	
+	//Plug Functions
+	//XXX Better API functions for this?
+	public void setPlugEnabled(String name, boolean enabled) {
+		for(IPluggable plug : this.enabledPlugs) {
+			if(plug.getName().equals(name)) {
+				plug.setEnabled(enabled);
+				break;
+			}
+		}
+	}
 
+	//OpenGL functions
 	public void setWireframeModeEnabled(boolean enabled) {
 		this.wireframe = enabled;
 		if(enabled) {
@@ -276,11 +291,14 @@ public class RenderEngine {
 					PriorityOverride override = method.getAnnotation(PriorityOverride.class);
 					if(override != null) priority = override.priority();
 					if(_debug) System.out.println("Registering PlugMode '"+mode.name +"' with "+priority.name()+" Priority");
-					
+
 					//Tear apart the Map and set the Pair
 					TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
 					HashSet<Pair<Method, IPluggable>> set = map.get(mode);
 					Pair<Method, IPluggable> pair = new Pair<Method, IPluggable>(method, object);
+
+					//Add the IPluggable to the enabledPlugs HashSet
+					this.enabledPlugs.add(object);
 
 					//Build the Map
 					set.add(pair);
@@ -292,19 +310,19 @@ public class RenderEngine {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		if(_debug) System.out.println("Plug '"+object.getName()+"' registered sucessfully.");
 
 		return true;
 	}
 
 	/* Other Functions */
-
 	public byte getFloppeldidoppelin() {
 		return this.floppeldidoppelin;
 	}
 
 	public static synchronized Logger getLogger() {
+		//TODO Move this into the Chassis
 		return _log;
 	}
 

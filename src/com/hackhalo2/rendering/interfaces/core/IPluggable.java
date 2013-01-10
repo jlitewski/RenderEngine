@@ -16,4 +16,7 @@ public interface IPluggable {
 	
 	public PlugMode.Priority getPriority();
 	
+	public void setEnabled(boolean flag);
+	public boolean isEnabled();
+	
 }

@@ -25,6 +25,7 @@ public class KeyboardBuffer implements IManager, IPluggable {
 	private BitSet bufferedLast = null;
 	private Set<Integer> registeredKeys = null;
 	private Map<Integer, Integer> keyMap = null;
+	private boolean enabled = true;
 
 	//Prevent Initialization from outside the classpath
 	protected KeyboardBuffer() {
@@ -52,6 +53,16 @@ public class KeyboardBuffer implements IManager, IPluggable {
 		this.bufferedLast = new BitSet();
 		this.registeredKeys = new TreeSet<Integer>();
 		this.keyMap = new TreeMap<Integer, Integer>();
+	}
+	
+	@Override
+	public void setEnabled(final boolean flag) {
+		this.enabled  = flag;
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 
 	@Override
