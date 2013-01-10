@@ -11,15 +11,18 @@ import com.hackhalo2.rendering.interfaces.core.IThreadManager;
 
 public class Chassis implements IChassis {
 	
-	//The Chassis systems
+	//The customizable systems
 	private ISoundSystem soundSystem = null;
 	private IEntityManager entityManager = null;
 	private INetworkManager networkManager = null;
 	private ISettingsManager settingsManager = null;
 	private IThreadManager threadManager = null;
+	
+	//The built in systems
 	private RenderEngine renderEngine = null;
 	private CameraManager cameraManager = null;
 	private KeyboardBuffer keyboardBuffer = null;
+	private RenderLogger renderLogger = null;
 	
 	//the finalized boolean
 	private boolean finalized = false;
@@ -27,6 +30,7 @@ public class Chassis implements IChassis {
 	public Chassis() {
 		this.cameraManager = new CameraManager();
 		this.keyboardBuffer = new KeyboardBuffer();
+		this.renderLogger = new RenderLogger();
 	}
 
 	@Override
@@ -64,6 +68,11 @@ public class Chassis implements IChassis {
 	@Override
 	public KeyboardBuffer getKeyboardBuffer() {
 		return this.keyboardBuffer;
+	}
+	
+	@Override
+	public RenderLogger getLogger() {
+		return this.renderLogger;
 	}
 
 	@Override
@@ -113,8 +122,6 @@ public class Chassis implements IChassis {
 		this.renderEngine = new RenderEngine(this);
 		
 		//Register things with the RenderEngine
-		//this.renderEngine.register(this.cameraManager, PlugMode.ALL);
-		//this.renderEngine.register(this.keyboardBuffer, PlugMode.ALL);
 		this.renderEngine.register(this.cameraManager);
 		this.renderEngine.register(this.keyboardBuffer);
 	}

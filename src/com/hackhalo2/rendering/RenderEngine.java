@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -28,8 +27,7 @@ import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
 import com.hackhalo2.util.Pair;
 
 public class RenderEngine {
-
-	private static Logger _log = Logger.getLogger("RenderEngine");
+	
 	private IChassis chassis = null;
 	public static final boolean _debug = true;
 	private Map<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>> pluggableMap =
@@ -319,11 +317,6 @@ public class RenderEngine {
 	/* Other Functions */
 	public byte getFloppeldidoppelin() {
 		return this.floppeldidoppelin;
-	}
-
-	public static synchronized Logger getLogger() {
-		//TODO Move this into the Chassis
-		return _log;
 	}
 
 	public void setClearColor(Color color) {
