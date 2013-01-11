@@ -30,6 +30,7 @@ public class CameraManager implements IManager, IPluggable {
 	private boolean hudEnabled = true;
 	private final Priority priority = Priority.LOWEST;
 	private boolean enabled = true;
+	private RenderLogger log = new RenderLogger();
 
 	public CameraManager() {
 		this.secondary = new HashMap<String, ICamera>();
@@ -40,10 +41,10 @@ public class CameraManager implements IManager, IPluggable {
 	public void register(ICamera camera) {
 		if(this.camera == null) {
 			this.camera = camera;
-			if(RenderEngine._debug) System.out.println("Registered new camera: "+camera.getName());
+			this.log.debug("camera", "Registered new camera: "+camera.getName(), 0);
 		} else {
 			this.secondary.put(camera.getName(), camera);
-			if(RenderEngine._debug) System.out.println("Registered new secondary camera: "+camera.getName());
+			this.log.debug("camera", "Registered new secondary camera: "+camera.getName(), 0);
 		}
 	}
 

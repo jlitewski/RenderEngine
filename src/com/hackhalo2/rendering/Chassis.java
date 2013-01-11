@@ -22,7 +22,6 @@ public class Chassis implements IChassis {
 	private RenderEngine renderEngine = null;
 	private CameraManager cameraManager = null;
 	private KeyboardBuffer keyboardBuffer = null;
-	private RenderLogger renderLogger = null;
 	
 	//the finalized boolean
 	private boolean finalized = false;
@@ -30,7 +29,6 @@ public class Chassis implements IChassis {
 	public Chassis() {
 		this.cameraManager = new CameraManager();
 		this.keyboardBuffer = new KeyboardBuffer();
-		this.renderLogger = new RenderLogger();
 	}
 
 	@Override
@@ -68,11 +66,6 @@ public class Chassis implements IChassis {
 	@Override
 	public KeyboardBuffer getKeyboardBuffer() {
 		return this.keyboardBuffer;
-	}
-	
-	@Override
-	public RenderLogger getLogger() {
-		return this.renderLogger;
 	}
 
 	@Override

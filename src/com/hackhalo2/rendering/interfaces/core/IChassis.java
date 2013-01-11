@@ -3,7 +3,6 @@ package com.hackhalo2.rendering.interfaces.core;
 import com.hackhalo2.rendering.CameraManager;
 import com.hackhalo2.rendering.KeyboardBuffer;
 import com.hackhalo2.rendering.RenderEngine;
-import com.hackhalo2.rendering.RenderLogger;
 
 public interface IChassis {
 	
@@ -19,7 +18,6 @@ public interface IChassis {
 	public RenderEngine getRenderEngine();
 	public CameraManager getCameraManager();
 	public KeyboardBuffer getKeyboardBuffer();
-	public RenderLogger getLogger();
 	
 	//Network System
 	public void setNetworkManager(INetworkManager networkManager);

@@ -29,6 +29,7 @@ import com.hackhalo2.util.Pair;
 public class RenderEngine {
 	
 	private IChassis chassis = null;
+	private RenderLogger log = new RenderLogger();
 	public static final boolean _debug = true;
 	private Map<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>> pluggableMap =
 			new TreeMap<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>>(new PrioritySorter());
@@ -61,7 +62,7 @@ public class RenderEngine {
 
 	/* Render code */
 	public void start() {
-		System.out.println("Initializing the RenderEngine...");
+		this.log.info("loop", "Initializing the RenderEngine...", 0);
 
 		Iterator<Pair<Method, IPluggable>> it1;
 		Iterator<VBOContainer> it2;
@@ -176,7 +177,7 @@ public class RenderEngine {
 			RenderUtils.updateFPS();
 			Display.sync(RenderUtils.fps);
 		}
-		System.out.println("Shutting down the RenderEngine...");
+		this.log.info("loop", "Shutting down the RenderEngine...", 0);
 
 		it1 = null;
 		it2 = null;
@@ -185,7 +186,7 @@ public class RenderEngine {
 		this.chassis.cleanup();
 		this.chassis = null;
 
-		System.out.println("RenderEngine successfully shut down.");
+		this.log.info("loop", "RenderEngine has shut down!", 0);
 		running = false;
 	}
 	
@@ -275,7 +276,7 @@ public class RenderEngine {
 
 	/* Register functions */
 	public boolean register(IPluggable object) {
-		System.out.println("Registering new Plug '"+object.getName()+"'...");
+		this.log.debug("register()", "Registering new Plug '"+object.getName()+"'...", 0);
 		try {
 			Method[] methods = Class.forName(object.getClass().getName()).getMethods();
 			for(Method method : methods) {
@@ -288,7 +289,7 @@ public class RenderEngine {
 					Priority priority = object.getPriority();
 					PriorityOverride override = method.getAnnotation(PriorityOverride.class);
 					if(override != null) priority = override.priority();
-					if(_debug) System.out.println("Registering PlugMode '"+mode.name +"' with "+priority.name()+" Priority");
+					this.log.debug("register()", "Registering PlugMode '"+mode.name +"' with "+priority.name()+" Priority", 1);
 
 					//Tear apart the Map and set the Pair
 					TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
@@ -309,7 +310,7 @@ public class RenderEngine {
 			return false;
 		}
 
-		if(_debug) System.out.println("Plug '"+object.getName()+"' registered sucessfully.");
+		this.log.debug("register()", "Plug '"+object.getName()+"' registered sucessfully.", 0);
 
 		return true;
 	}
