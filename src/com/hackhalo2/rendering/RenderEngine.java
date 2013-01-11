@@ -45,7 +45,7 @@ public class RenderEngine {
 
 	protected RenderEngine(IChassis chassis) {
 		if(_debug) System.out.println("Debug Mode Active");
-		//Initialize the plugable map
+		//Initialize the pluggable map
 		for(Priority priority : Priority.values()) {
 			TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
 			map = new TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>(new PlugModeSorter());
@@ -276,7 +276,7 @@ public class RenderEngine {
 
 	/* Register functions */
 	public boolean register(IPluggable object) {
-		this.log.debug("register()", "Registering new Plug '"+object.getName()+"'...", 0);
+		this.log.debug("register", "Registering new Plug '"+object.getName()+"'...", 0);
 		try {
 			Method[] methods = Class.forName(object.getClass().getName()).getMethods();
 			for(Method method : methods) {
@@ -289,7 +289,7 @@ public class RenderEngine {
 					Priority priority = object.getPriority();
 					PriorityOverride override = method.getAnnotation(PriorityOverride.class);
 					if(override != null) priority = override.priority();
-					this.log.debug("register()", "Registering PlugMode '"+mode.name +"' with "+priority.name()+" Priority", 1);
+					this.log.debug("register", "Registering PlugMode '"+mode.name +"' with "+priority.name()+" Priority", 1);
 
 					//Tear apart the Map and set the Pair
 					TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
@@ -310,7 +310,7 @@ public class RenderEngine {
 			return false;
 		}
 
-		this.log.debug("register()", "Plug '"+object.getName()+"' registered sucessfully.", 0);
+		this.log.debug("register", "Plug '"+object.getName()+"' registered sucessfully.", 0);
 
 		return true;
 	}

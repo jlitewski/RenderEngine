@@ -146,6 +146,7 @@ public class EulerCamera extends Camera {
 			if(Mouse.isInsideWindow()) { //Make use the mouse is inside the window before trying to grab it
 				Mouse.setCursorPosition(Display.getWidth()/2, Display.getHeight()/2);
 				Mouse.setGrabbed(!Mouse.isGrabbed());
+				this.log.debug("camera_event", "Mouse grabbed: "+Mouse.isGrabbed(), 0);
 			}
 		}
 	}
