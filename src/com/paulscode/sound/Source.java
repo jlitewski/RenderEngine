@@ -7,6 +7,8 @@ import javax.sound.sampled.AudioFormat;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.hackhalo2.rendering.RenderLogger;
+
 /**
  * The Source class is used to store information about a source. Source objects
  * are stored in a map in the Library class. The information they contain is
@@ -65,7 +67,7 @@ public class Source {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private SoundSystemLogger logger;
+	private RenderLogger logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * True if this source is being directly fed with raw audio data.
@@ -281,8 +283,6 @@ public class Source {
 			String sourcename, FilenameURL filenameURL,
 			SoundBuffer soundBuffer, float x, float y, float z, int attModel,
 			float distOrRoll, boolean temporary) {
-		// grab a handle to the message logger:
-		logger = SoundSystemConfig.getLogger();
 
 		this.priority = priority;
 		this.toStream = toStream;
@@ -290,7 +290,7 @@ public class Source {
 		this.sourcename = sourcename;
 		this.filenameURL = filenameURL;
 		this.soundBuffer = soundBuffer;
-		position = new Vector3f(x, y, z);
+		this.position = new Vector3f(x, y, z);
 		this.attModel = attModel;
 		this.distOrRoll = distOrRoll;
 		this.velocity = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -309,29 +309,26 @@ public class Source {
 	 *            Buffer containing audio data, or null if not loaded yet.
 	 */
 	public Source(Source old, SoundBuffer soundBuffer) {
-		// grab a handle to the message logger:
-		logger = SoundSystemConfig.getLogger();
+		this.priority = old.priority;
+		this.toStream = old.toStream;
+		this.toLoop = old.toLoop;
+		this.sourcename = old.sourcename;
+		this.filenameURL = old.filenameURL;
+		this.position = new Vector3f(old.position);
+		this.attModel = old.attModel;
+		this.distOrRoll = old.distOrRoll;
+		this.velocity = new Vector3f(old.velocity);
+		this.temporary = old.temporary;
 
-		priority = old.priority;
-		toStream = old.toStream;
-		toLoop = old.toLoop;
-		sourcename = old.sourcename;
-		filenameURL = old.filenameURL;
-		position = new Vector3f(old.position);
-		attModel = old.attModel;
-		distOrRoll = old.distOrRoll;
-		velocity = new Vector3f(old.velocity);
-		temporary = old.temporary;
+		this.sourceVolume = old.sourceVolume;
 
-		sourceVolume = old.sourceVolume;
-
-		rawDataStream = old.rawDataStream;
-		rawDataFormat = old.rawDataFormat;
+		this.rawDataStream = old.rawDataStream;
+		this.rawDataFormat = old.rawDataFormat;
 
 		this.soundBuffer = soundBuffer;
 
-		if (toStream && filenameURL != null)
-			codec = SoundSystemConfig.getCodec(filenameURL.getFilename());
+		if (this.toStream && this.filenameURL != null)
+			this.codec = SoundSystemConfig.getCodec(this.filenameURL.getFilename());
 	}
 
 	/**
@@ -360,8 +357,6 @@ public class Source {
 	 */
 	public Source(AudioFormat audioFormat, boolean priority, String sourcename,
 			float x, float y, float z, int attModel, float distOrRoll) {
-		// grab a handle to the message logger:
-		logger = SoundSystemConfig.getLogger();
 
 		this.priority = priority;
 		this.toStream = true;
@@ -369,14 +364,14 @@ public class Source {
 		this.sourcename = sourcename;
 		this.filenameURL = null;
 		this.soundBuffer = null;
-		position = new Vector3f(x, y, z);
+		this.position = new Vector3f(x, y, z);
 		this.attModel = attModel;
 		this.distOrRoll = distOrRoll;
 		this.velocity = new Vector3f(0.0f, 0.0f, 0.0f);
 		this.temporary = false;
 
-		rawDataStream = true;
-		rawDataFormat = audioFormat;
+		this.rawDataStream = true;
+		this.rawDataFormat = audioFormat;
 	}
 
 	/* Override methods */
@@ -385,20 +380,20 @@ public class Source {
 	 * Shuts the source down and removes references to all instantiated objects.
 	 */
 	public void cleanup() {
-		if (codec != null)
-			codec.cleanup();
+		if (this.codec != null)
+			this.codec.cleanup();
 
-		synchronized (soundSequenceLock) {
-			if (soundSequenceQueue != null)
-				soundSequenceQueue.clear();
-			soundSequenceQueue = null;
+		synchronized (this.soundSequenceLock) {
+			if (this.soundSequenceQueue != null)
+				this.soundSequenceQueue.clear();
+			this.soundSequenceQueue = null;
 		}
 
-		sourcename = null;
-		filenameURL = null;
-		position = null;
-		soundBuffer = null;
-		codec = null;
+		this.sourcename = null;
+		this.filenameURL = null;
+		this.position = null;
+		this.soundBuffer = null;
+		this.codec = null;
 	}
 
 	/**
@@ -1267,7 +1262,7 @@ public class Source {
 	 *            Message to print.
 	 */
 	protected void message(String message) {
-		logger.message(message, 0);
+		this.logger.info(this.getClassName(), message, 0);
 	}
 
 	/**
@@ -1277,7 +1272,7 @@ public class Source {
 	 *            Message to print.
 	 */
 	protected void importantMessage(String message) {
-		logger.importantMessage(message, 0);
+		this.logger.warn(this.getClassName(), message, 0);
 	}
 
 	/**
@@ -1290,7 +1285,11 @@ public class Source {
 	 * @return True if error is true.
 	 */
 	protected boolean errorCheck(boolean error, String message) {
-		return logger.errorCheck(error, getClassName(), message, 0);
+		if(error) {
+			this.logger.err(this.getClassName(), message, 0);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -1300,7 +1299,7 @@ public class Source {
 	 *            Message to print.
 	 */
 	protected void errorMessage(String message) {
-		logger.errorMessage(getClassName(), message, 0);
+		this.logger.err(this.getClassName(), message, 0);
 	}
 
 	/**
@@ -1310,6 +1309,6 @@ public class Source {
 	 *            Exception containing the information to print.
 	 */
 	protected void printStackTrace(Exception e) {
-		logger.printStackTrace(e, 1);
+		this.logger.printException(e);
 	}
 }

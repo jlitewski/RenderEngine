@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.Set;
 import javax.sound.sampled.AudioFormat;
 
+import com.hackhalo2.rendering.RenderLogger;
+
 /**
  * The SoundSystem class is the core class for the SoundSystem library. It is
  * capable of interfacing with external sound library and codec library
@@ -71,7 +73,7 @@ public class SoundSystem {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	protected SoundSystemLogger logger;
+	protected RenderLogger logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Handle to the active sound library.
@@ -129,14 +131,6 @@ public class SoundSystem {
 	 * information about sound library types.
 	 */
 	public SoundSystem() {
-		// create the message logger:
-		logger = SoundSystemConfig.getLogger();
-		// if the user didn't create one, then do it now:
-		if (logger == null) {
-			logger = new SoundSystemLogger();
-			SoundSystemConfig.setLogger(logger);
-		}
-
 		linkDefaultLibrariesAndCodecs();
 
 		LinkedList<Class<?>> libraries = SoundSystemConfig.getLibraries();
@@ -150,7 +144,7 @@ public class SoundSystem {
 					init(c);
 					return;
 				} catch (SoundSystemException sse) {
-					logger.printExceptionMessage(sse, 1);
+					this.logger.printException(sse);
 				}
 			}
 		}
@@ -158,7 +152,7 @@ public class SoundSystem {
 			init(Library.class);
 			return;
 		} catch (SoundSystemException sse) {
-			logger.printExceptionMessage(sse, 1);
+			this.logger.printException(sse);
 		}
 	}
 
@@ -171,13 +165,6 @@ public class SoundSystem {
 	 *            library.
 	 */
 	public SoundSystem(Class<?> libraryClass) throws SoundSystemException {
-		// create the message logger:
-		logger = SoundSystemConfig.getLogger();
-		// if the user didn't create one, then do it now:
-		if (logger == null) {
-			logger = new SoundSystemLogger();
-			SoundSystemConfig.setLogger(logger);
-		}
 		linkDefaultLibrariesAndCodecs();
 
 		init(libraryClass);
@@ -1679,7 +1666,7 @@ public class SoundSystem {
 				lastException(SET, new SoundSystemException(
 						"Silent mode did not load properly.  "
 								+ "Library was null after initialization.",
-						SoundSystemException.LIBRARY_NULL));
+								SoundSystemException.LIBRARY_NULL));
 				initialized(SET, true);
 				return;
 			}
@@ -2733,18 +2720,18 @@ public class SoundSystem {
 									commandObject.floatArgs[1],
 									commandObject.floatArgs[2]);
 							break;
-						// Methods related to playing sources must be processed
-						// after cull/activate commands in order for source
-						// management to work properly, so save them for
-						// later:
-						// ------------------------------------------------------
+							// Methods related to playing sources must be processed
+							// after cull/activate commands in order for source
+							// management to work properly, so save them for
+							// later:
+							// ------------------------------------------------------
 						case CommandObject.PLAY:
 							sourcePlayList.add(commandObject);
 							break;
 						case CommandObject.FEED_RAW_AUDIO_DATA:
 							sourcePlayList.add(commandObject);
 							break;
-						// ------------------------------------------------------
+							// ------------------------------------------------------
 						case CommandObject.PAUSE:
 							CommandPause(commandObject.stringArgs[0]);
 							break;
@@ -2803,7 +2790,7 @@ public class SoundSystem {
 						case CommandObject.NEW_LIBRARY:
 							CommandNewLibrary(commandObject.classArgs[0]);
 							break;
-						// If we don't recognize the command, just skip it:
+							// If we don't recognize the command, just skip it:
 						default:
 							break;
 						}
@@ -2953,24 +2940,16 @@ public class SoundSystem {
 	 */
 	public static boolean libraryCompatible(Class<?> libraryClass) {
 		// create the message logger:
-		SoundSystemLogger logger = SoundSystemConfig.getLogger();
-		// if the user didn't create one, then do it now:
-		if (logger == null) {
-			logger = new SoundSystemLogger();
-			SoundSystemConfig.setLogger(logger);
-		}
-		logger.message("", 0);
-		logger.message(
-				"Checking if "
-						+ SoundSystemConfig.getLibraryTitle(libraryClass)
-						+ " is compatible...", 0);
+		RenderLogger logger = SoundSystemConfig.getLogger();
+		logger.debug("", 0);
+		logger.debug("Checking if "
+				+ SoundSystemConfig.getLibraryTitle(libraryClass)
+				+ " is compatible...", 0);
 
 		boolean comp = SoundSystemConfig.libraryCompatible(libraryClass);
 
-		if (comp)
-			logger.message("...yes", 1);
-		else
-			logger.message("...no", 1);
+		if (comp) logger.debug("...yes", 1);
+		else logger.debug("...no", 1);
 
 		return comp;
 	}
@@ -3085,7 +3064,7 @@ public class SoundSystem {
 	 *            Number of tabs to indent the message.
 	 */
 	protected void message(String message, int indent) {
-		logger.message(message, indent);
+		this.logger.info(this.className, message, indent);
 	}
 
 	/**
@@ -3097,7 +3076,7 @@ public class SoundSystem {
 	 *            Number of tabs to indent the message.
 	 */
 	protected void importantMessage(String message, int indent) {
-		logger.importantMessage(message, indent);
+		this.logger.warn(this.className, message, indent);
 	}
 
 	/**
@@ -3112,7 +3091,11 @@ public class SoundSystem {
 	 * @return True if error is true.
 	 */
 	protected boolean errorCheck(boolean error, String message, int indent) {
-		return logger.errorCheck(error, className, message, indent);
+		if(error) {
+			this.logger.err(this.className, message, indent);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -3124,6 +3107,6 @@ public class SoundSystem {
 	 *            Number of tabs to indent the message.
 	 */
 	protected void errorMessage(String message, int indent) {
-		logger.errorMessage(className, message, indent);
+		this.logger.err(this.className, message, indent);
 	}
 }

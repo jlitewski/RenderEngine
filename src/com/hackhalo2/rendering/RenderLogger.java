@@ -10,7 +10,7 @@ public class RenderLogger implements ILogger {
 	@Override
 	public void printException(Throwable t) {
 		if(t == null) return; //If the Throwable is null, ignore it
-		int indent = 0;
+		int indent = 1;
 		
 		//Print exceptions only if DebugMode is on or if the Throwable is an instance of a RuntimeException
 		if(this.isDebugModeEnabled() || (t instanceof RuntimeException)) {
