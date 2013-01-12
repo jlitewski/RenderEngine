@@ -102,7 +102,7 @@ public class SoundSystemConfig {
 	 * SoundSystemLogger} class and calling the setLogger() method (must be done
 	 * BEFORE instantiating the SoundSystem class!)
 	 */
-	private static RenderLogger logger = null;
+	private static RenderLogger logger = new RenderLogger();
 
 	/**
 	 * List of library types in their order of priority.
@@ -745,16 +745,12 @@ public class SoundSystemConfig {
 					+ "not implement interface 'ICodec' in method 'setCodec'",
 					SoundSystemException.CLASS_TYPE_MISMATCH);
 
-		if (codecs == null)
-			codecs = new LinkedList<Codec>();
-
-		ListIterator<Codec> i = codecs.listIterator();
-		Codec codec;
-
-		while (i.hasNext()) {
-			codec = i.next();
-			if (extension.matches(codec.extensionRegX))
-				i.remove();
+		if (codecs == null) codecs = new LinkedList<Codec>();
+		else {
+			for(Codec codec : codecs) {
+				if (extension.matches(codec.extensionRegX))
+					codecs.remove(codec);
+			}
 		}
 		codecs.add(new Codec(extension, iCodecClass));
 
@@ -773,14 +769,9 @@ public class SoundSystemConfig {
 	 * @return Codec to use for reading audio data.
 	 */
 	public static synchronized ICodec getCodec(String filename) {
-		if (codecs == null)
-			return null;
+		if (codecs == null) return null;
 
-		ListIterator<Codec> i = codecs.listIterator();
-		Codec codec;
-
-		while (i.hasNext()) {
-			codec = i.next();
+		for(Codec codec : codecs) {
 			if (filename.matches(codec.extensionRegX))
 				return codec.getInstance();
 		}

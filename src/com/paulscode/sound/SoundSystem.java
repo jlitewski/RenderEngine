@@ -1495,7 +1495,7 @@ public class SoundSystem {
 	 *         {@link paulscode.sound.SoundSystemConfig SoundSystemConfig} for
 	 *         information about chosing a sound library.
 	 */
-	public boolean switchLibrary(Class<?> libraryClass)
+	public boolean switchLibrary(Class<? extends Library> libraryClass)
 			throws SoundSystemException {
 		synchronized (SoundSystemConfig.THREAD_SYNC) {
 			initialized(SET, false);
@@ -1619,12 +1619,12 @@ public class SoundSystem {
 	 * used internally by SoundSystem for thread synchronization, and it can not
 	 * be called directly - please use the newLibrary() method instead.
 	 * 
-	 * @param libraryClass
+	 * @param classArgs
 	 *            Library to use. See {@link paulscode.sound.SoundSystemConfig
 	 *            SoundSystemConfig} for information about chosing a sound
 	 *            library.
 	 */
-	private void CommandNewLibrary(Class<?> libraryClass) {
+	private void CommandNewLibrary(Class<?> classArgs) {
 		initialized(SET, false);
 
 		String headerMessage = "Initializing ";
@@ -1635,13 +1635,13 @@ public class SoundSystem {
 			soundLibrary.cleanup();
 			soundLibrary = null;
 		}
-		message(headerMessage + SoundSystemConfig.getLibraryTitle(libraryClass),
+		message(headerMessage + SoundSystemConfig.getLibraryTitle(classArgs),
 				0);
-		message("(" + SoundSystemConfig.getLibraryDescription(libraryClass)
+		message("(" + SoundSystemConfig.getLibraryDescription(classArgs)
 				+ ")", 1);
 
 		try {
-			soundLibrary = (Library) libraryClass.newInstance();
+			soundLibrary = (Library) classArgs.newInstance();
 		} catch (InstantiationException ie) {
 			errorMessage("The specified library did not load properly", 1);
 		} catch (IllegalAccessException iae) {
@@ -2938,7 +2938,7 @@ public class SoundSystem {
 	 *            Libary type to check.
 	 * @return True or false.
 	 */
-	public static boolean libraryCompatible(Class<?> libraryClass) {
+	public static boolean libraryCompatible(Class<? extends Library> libraryClass) {
 		// create the message logger:
 		RenderLogger logger = SoundSystemConfig.getLogger();
 		logger.debug("", 0);
@@ -3018,7 +3018,7 @@ public class SoundSystem {
 	 *            New value if action is SET, otherwise XXX.
 	 * @return value of boolean 'initialized'.
 	 */
-	private static Class<?> currentLibrary(boolean action, Class<?> value) {
+	private static Class<?> currentLibrary(boolean action, Class<? extends Library> value) {
 		synchronized (SoundSystemConfig.THREAD_SYNC) {
 			if (action == SET)
 				currentLibrary = value;

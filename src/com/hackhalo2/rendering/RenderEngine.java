@@ -44,7 +44,7 @@ public class RenderEngine {
 	private int cullingMode = GL11.GL_BACK;
 
 	protected RenderEngine(IChassis chassis) {
-		if(_debug) System.out.println("Debug Mode Active");
+		this.log.debug("Debug Mode enabled", 0);
 		//Initialize the pluggable map
 		for(Priority priority : Priority.values()) {
 			TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
