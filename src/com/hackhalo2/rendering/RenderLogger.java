@@ -1,8 +1,11 @@
 package com.hackhalo2.rendering;
 
+import java.util.logging.Logger;
+
 import com.hackhalo2.rendering.interfaces.core.ILogger;
 
 public class RenderLogger implements ILogger {
+	private Logger logger = Logger.getLogger("RenderLogger");
 	//TODO: use a Logger instead of sysout and syserr
 	
 	public RenderLogger() { }
@@ -10,17 +13,18 @@ public class RenderLogger implements ILogger {
 	@Override
 	public void printException(Throwable t) {
 		if(t == null) return; //If the Throwable is null, ignore it
-		int indent = 0;
+		int indent = 1;
 		
 		//Print exceptions only if DebugMode is on or if the Throwable is an instance of a RuntimeException
 		if(this.isDebugModeEnabled() || (t instanceof RuntimeException)) {
-			this.exception(t.getMessage(), indent);
+			this.exception(t.getClass().getName(), indent);
+			this.exception("Message: '"+t.getLocalizedMessage()+"'", indent);
 			System.err.println(this.indentString("Stack Trace:", indent));
 			indent++;
 			
 			StackTraceElement[] stack = t.getStackTrace();
 			if(stack == null || stack.length == 0) {
-				//Return if there were no StackTraceElements  (or if it was null)
+				//Return if there were no StackTraceElements (or if it was null)
 				System.err.println(this.indentString("(No StackTraceElements Available)", indent));
 				return;
 			}
