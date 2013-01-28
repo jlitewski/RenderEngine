@@ -1,8 +1,11 @@
 package com.hackhalo2.rendering;
 
+import java.util.logging.Logger;
+
 import com.hackhalo2.rendering.interfaces.core.ILogger;
 
 public class RenderLogger implements ILogger {
+	private Logger logger = Logger.getLogger("RenderLogger");
 	//TODO: use a Logger instead of sysout and syserr
 	
 	public RenderLogger() { }
