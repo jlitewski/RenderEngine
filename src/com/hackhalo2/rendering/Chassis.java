@@ -22,6 +22,7 @@ public class Chassis implements IChassis {
 	private RenderEngine renderEngine = null;
 	private CameraManager cameraManager = null;
 	private KeyboardBuffer keyboardBuffer = null;
+	private EventBus eventBus = null;
 	
 	//the finalized boolean
 	private boolean finalized = false;
@@ -100,6 +101,11 @@ public class Chassis implements IChassis {
 	public IThreadManager getThreadManager() {
 		return this.threadManager;
 	}
+	
+	@Override
+	public EventBus getEventBus() {
+		return this.eventBus;
+	}
 
 	@Override
 	public void initialize() {
@@ -110,6 +116,9 @@ public class Chassis implements IChassis {
 		//Initialize the SoundSystem
 		if(this.soundSystem == null) this.soundSystem = new MIDISoundSystem(); //Fallback if no SoundSystem was supplied
 		this.soundSystem.initialize();
+		
+		//Initialize the EventBus
+		this.eventBus = new EventBus();
 		
 		//Instance the RenderEngine
 		this.renderEngine = new RenderEngine(this);
@@ -123,6 +132,7 @@ public class Chassis implements IChassis {
 	public void cleanup() {
 		// TODO Add cleanup methods to all the underlying interfaces and call it here
 		((IManager)this.soundSystem).cleanup();
+		this.eventBus.cleanup();
 		this.keyboardBuffer.cleanup();
 		this.cameraManager.cleanup();
 	}

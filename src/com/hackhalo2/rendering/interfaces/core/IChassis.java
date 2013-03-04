@@ -1,6 +1,7 @@
 package com.hackhalo2.rendering.interfaces.core;
 
 import com.hackhalo2.rendering.CameraManager;
+import com.hackhalo2.rendering.EventBus;
 import com.hackhalo2.rendering.KeyboardBuffer;
 import com.hackhalo2.rendering.RenderEngine;
 
@@ -18,6 +19,9 @@ public interface IChassis {
 	public RenderEngine getRenderEngine();
 	public CameraManager getCameraManager();
 	public KeyboardBuffer getKeyboardBuffer();
+	
+	//Event System
+	public EventBus getEventBus();
 	
 	//Network System
 	public void setNetworkManager(INetworkManager networkManager);
