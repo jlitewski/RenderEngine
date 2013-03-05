@@ -20,11 +20,11 @@ import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IManager;
 import com.hackhalo2.rendering.interfaces.core.IPluggable;
 import com.hackhalo2.rendering.plugs.RenderPluggable;
+import com.hackhalo2.rendering.util.Pair;
 import com.hackhalo2.rendering.util.PlugModeSorter;
 import com.hackhalo2.rendering.util.PrioritySorter;
 import com.hackhalo2.rendering.util.VBOContainer;
 import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
-import com.hackhalo2.util.Pair;
 
 public class RenderEngine {
 	
@@ -306,7 +306,7 @@ public class RenderEngine {
 				}
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			this.log.printException(e);
 			return false;
 		}
 
