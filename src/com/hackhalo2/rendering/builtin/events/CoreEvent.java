@@ -1,11 +1,13 @@
 package com.hackhalo2.rendering.builtin.events;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map;
 import java.util.TreeSet;
 
+import com.hackhalo2.rendering.RenderLogger;
 import com.hackhalo2.rendering.interfaces.annotations.EventMethod;
 import com.hackhalo2.rendering.interfaces.event.EventListener;
 import com.hackhalo2.rendering.interfaces.event.IEvent;
@@ -25,6 +27,10 @@ public class CoreEvent implements IEvent {
 	 */
 	protected Map<EventListener, TreeSet<UsedPair<Method, EventMethod>>> listenerMap =
 			new HashMap<EventListener, TreeSet<UsedPair<Method, EventMethod>>>();
+	/**
+	 * The Logger, obviously
+	 */
+	protected RenderLogger logger = new RenderLogger();
 
 	protected CoreEvent() { }
 
@@ -84,7 +90,21 @@ public class CoreEvent implements IEvent {
 						 */
 						Class<?> methodEventType = methodPair.getFirst().getParameterTypes()[0];
 						
-						//TODO: The rest of this
+						//Check to see if the MethodType is assignable to the class of c
+						if(methodEventType.isAssignableFrom(c)) {
+							methodPair.incrementUsedCounter(); //Increment the used counter, since the use was successful
+							
+							try {
+								//Invoke the Event listener
+								methodPair.getFirst().invoke(listener, event);
+							} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+								/*
+								 * If anything should go wrong (which it very much will sooner or later),
+								 * print the exception to the logger.
+								 */
+								this.logger.printException(e);
+							}
+						}
 					}
 				}
 				c = c.getSuperclass(); //Get the superclass of the event and redo the loop until this is null
