@@ -1,5 +1,7 @@
 package com.hackhalo2.rendering.interfaces.entity;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public interface IEntity {
 	
 	/**
@@ -9,5 +11,12 @@ public interface IEntity {
 	 * @return The Unique Entity ID
 	 */
 	public int getUEID();
+	
+	/**
+	 * Get the position of this Entity. 
+	 * 
+	 * @return
+	 */
+	public Vector3f getPosition();
 
 }

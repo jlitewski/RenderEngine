@@ -1,5 +1,6 @@
 package com.hackhalo2.rendering;
 
+import com.hackhalo2.rendering.builtin.BasicEntityManager;
 import com.hackhalo2.rendering.builtin.MIDISoundSystem;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IEntityManager;
@@ -115,6 +116,9 @@ public class Chassis implements IChassis {
 		//Initialize the EventBus
 		//Since the EventBus is mostly a static class, we only need to worry about the cleanup() method
 		this.eventBus = new EventBus();
+		
+		//Initialize the EntityManager
+		if(this.entityManager == null) this.entityManager = new BasicEntityManager();
 		
 		//Instance the RenderEngine
 		this.renderEngine = new RenderEngine(this);
