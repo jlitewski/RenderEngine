@@ -101,11 +101,6 @@ public class Chassis implements IChassis {
 	public IThreadManager getThreadManager() {
 		return this.threadManager;
 	}
-	
-	@Override
-	public EventBus getEventBus() {
-		return this.eventBus;
-	}
 
 	@Override
 	public void initialize() {
@@ -118,6 +113,7 @@ public class Chassis implements IChassis {
 		this.soundSystem.initialize();
 		
 		//Initialize the EventBus
+		//Since the EventBus is mostly a static class, we only need to worry about the cleanup() method
 		this.eventBus = new EventBus();
 		
 		//Instance the RenderEngine
