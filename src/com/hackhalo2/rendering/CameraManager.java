@@ -30,7 +30,7 @@ public class CameraManager implements IManager, IPluggable {
 	private boolean hudEnabled = true;
 	private final Priority priority = Priority.LOWEST;
 	private boolean enabled = true;
-	private RenderLogger log = new RenderLogger();
+	private Dashboard log = new Dashboard();
 
 	public CameraManager() {
 		this.secondary = new HashMap<String, ICamera>();

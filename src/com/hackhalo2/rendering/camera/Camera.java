@@ -4,13 +4,13 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.hackhalo2.rendering.KeyboardBuffer;
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 import com.hackhalo2.rendering.interfaces.camera.ICamera;
 
 public abstract class Camera implements ICamera {
 	
 	protected Vector3f position = new Vector3f(0,0,0);
-	protected RenderLogger log = new RenderLogger();
+	protected Dashboard log = new Dashboard();
 	protected KeyboardBuffer kb = null;
 	protected float zNear = 0.3f;
 	protected float zFar = 100f;

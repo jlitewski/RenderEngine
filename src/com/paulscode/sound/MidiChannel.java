@@ -17,7 +17,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The MidiChannel class provides an interface for playing MIDI files, using the
@@ -52,7 +52,7 @@ public class MidiChannel implements MetaEventListener {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private RenderLogger logger = SoundSystemConfig.getLogger();
+	private Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Filename/URL to the file:

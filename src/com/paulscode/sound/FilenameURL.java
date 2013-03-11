@@ -2,7 +2,7 @@ package com.paulscode.sound;
 
 import java.net.URL;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The FilenameURL class is designed to associate a String filename/identifier
@@ -37,7 +37,7 @@ public class FilenameURL {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private RenderLogger logger = SoundSystemConfig.getLogger();
+	private Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Filename or identifier for the file.

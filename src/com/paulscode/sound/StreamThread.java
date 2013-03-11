@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The StreamThread class is used to process all streaming sources. This thread
@@ -41,7 +41,7 @@ public class StreamThread extends SimpleThread {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private RenderLogger logger = SoundSystemConfig.getLogger();
+	private Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * List of sources that are currently streaming.

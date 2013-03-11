@@ -3,7 +3,7 @@ package com.paulscode.sound;
 import java.util.LinkedList;
 import javax.sound.sampled.AudioFormat;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The Channel class is the base class which can be extended for
@@ -53,7 +53,7 @@ public class Channel {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private RenderLogger logger = SoundSystemConfig.getLogger();
+	private Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Whatever source is attached to this channel.

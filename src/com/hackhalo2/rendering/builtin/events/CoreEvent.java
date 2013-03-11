@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.TreeSet;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 import com.hackhalo2.rendering.interfaces.annotations.EventMethod;
 import com.hackhalo2.rendering.interfaces.event.EventListener;
 import com.hackhalo2.rendering.interfaces.event.IEvent;
@@ -30,7 +30,7 @@ public class CoreEvent implements IEvent {
 	/**
 	 * The Logger, obviously
 	 */
-	protected RenderLogger logger = new RenderLogger();
+	protected Dashboard logger = new Dashboard();
 
 	protected CoreEvent() { }
 

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import javax.sound.sampled.AudioFormat;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The Library class is the class from which all library types are extended. It
@@ -48,7 +48,7 @@ public class Library {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private RenderLogger logger = SoundSystemConfig.getLogger();
+	private Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Position and orientation of the listener.

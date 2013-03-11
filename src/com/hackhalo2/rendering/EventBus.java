@@ -27,7 +27,7 @@ public class EventBus implements IManager {
 	private static int maxID = 0;
 	private final int masterBusID = maxID++;
 
-	private static final RenderLogger logger = new RenderLogger();
+	private static final Dashboard logger = new Dashboard();
 
 	protected EventBus() {
 

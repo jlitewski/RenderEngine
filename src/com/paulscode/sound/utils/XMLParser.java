@@ -1,6 +1,6 @@
 package com.paulscode.sound.utils;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 import com.paulscode.sound.SoundSystemConfig;
 
 import java.io.BufferedReader;
@@ -42,7 +42,7 @@ public class XMLParser {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private static RenderLogger logger = SoundSystemConfig.getLogger();
+	private static Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Parses the XML data contained in the specified file, and returns a list

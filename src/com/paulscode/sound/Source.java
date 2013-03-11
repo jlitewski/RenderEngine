@@ -7,7 +7,7 @@ import javax.sound.sampled.AudioFormat;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The Source class is used to store information about a source. Source objects
@@ -67,7 +67,7 @@ public class Source {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private RenderLogger logger = SoundSystemConfig.getLogger();
+	private Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * True if this source is being directly fed with raw audio data.

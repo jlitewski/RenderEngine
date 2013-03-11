@@ -29,7 +29,7 @@ import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
 public class RenderEngine {
 	
 	private IChassis chassis = null;
-	private RenderLogger log = new RenderLogger();
+	private Dashboard log = new Dashboard();
 	public static final boolean _debug = true;
 	private Map<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>> pluggableMap =
 			new TreeMap<Priority, TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>>>(new PrioritySorter());

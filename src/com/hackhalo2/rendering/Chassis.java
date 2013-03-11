@@ -1,7 +1,7 @@
 package com.hackhalo2.rendering;
 
-import com.hackhalo2.rendering.builtin.BasicEntityManager;
 import com.hackhalo2.rendering.builtin.MIDISoundSystem;
+import com.hackhalo2.rendering.builtin.entity.BasicEntityManager;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IEntityManager;
 import com.hackhalo2.rendering.interfaces.core.IManager;

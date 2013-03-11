@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.ListIterator;
 import java.util.LinkedList;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The SoundSystemConfig class is used to access global sound system settings,
@@ -102,7 +102,7 @@ public class SoundSystemConfig {
 	 * SoundSystemLogger} class and calling the setLogger() method (must be done
 	 * BEFORE instantiating the SoundSystem class!)
 	 */
-	private static RenderLogger logger = new RenderLogger();
+	private static Dashboard logger = new Dashboard();
 
 	/**
 	 * List of library types in their order of priority.
@@ -395,7 +395,7 @@ public class SoundSystemConfig {
 	 * 
 	 * @return The current message logger.
 	 */
-	public static RenderLogger getLogger() {
+	public static Dashboard getLogger() {
 		return logger;
 	}
 

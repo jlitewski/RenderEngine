@@ -4,11 +4,11 @@ import java.util.logging.Logger;
 
 import com.hackhalo2.rendering.interfaces.core.ILogger;
 
-public class RenderLogger implements ILogger {
+public class Dashboard implements ILogger {
 	private Logger logger = Logger.getLogger("RenderLogger");
 	//TODO: use a Logger instead of sysout and syserr
 	
-	public RenderLogger() { }
+	public Dashboard() { }
 
 	@Override
 	public void printException(Throwable t) {

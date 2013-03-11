@@ -1,6 +1,6 @@
 package com.paulscode.sound.utils;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 import com.paulscode.sound.SoundSystem;
 import com.paulscode.sound.SoundSystemConfig;
 import com.paulscode.sound.SoundSystemException;
@@ -38,7 +38,7 @@ public class SoundSystemLoader {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	private static RenderLogger logger = SoundSystemConfig.getLogger();
+	private static Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * If true, debug messages are printed out.

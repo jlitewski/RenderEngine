@@ -1,5 +1,7 @@
 package com.hackhalo2.rendering.interfaces.entity;
 
+import java.util.Collection;
+
 public interface IEntityTracker {
 	
 	/**
@@ -23,5 +25,23 @@ public interface IEntityTracker {
 	 * as it's ment to send update packets via a Network handler, which currently is not implemented.
 	 */
 	public void updateTrackedEntities();
+	
+	/**
+	 * Gets all Entities from this Tracker. Depending on how the Tracker is implemented, this list could 
+	 * be huge. 
+	 * 
+	 * @return every Entity this Tracker knows of
+	 */
+	public Collection<IEntity> getEntities();
+	
+	/**
+	 * Gets all Entities from this Tracker that either extend or implement the provided Class. Depending 
+	 * on how this Tracker is implemented, this Collection could be huge. If no Entities are found that 
+	 * extend or implement the provided Class, null will be returned
+	 * 
+	 * @param clazz The class to check against the Entities
+	 * @return the Collection of Entities that extend or implement the provided class, or null for none found
+	 */
+	public Collection<IEntity> getEntitiesByClass(Class<? extends IEntity> clazz);
 
 }

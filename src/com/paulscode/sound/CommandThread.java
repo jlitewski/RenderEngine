@@ -1,6 +1,6 @@
 package com.paulscode.sound;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The CommandThread class is designed to move all command processing into a
@@ -44,7 +44,7 @@ public class CommandThread extends SimpleThread {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	protected RenderLogger logger = SoundSystemConfig.getLogger();
+	protected Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Handle to the Sound System. This is where the Command Queue is located.

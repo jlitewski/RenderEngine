@@ -1,8 +1,19 @@
 package com.hackhalo2.rendering.interfaces.core;
 
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.hackhalo2.rendering.interfaces.entity.IEntity;
 import com.hackhalo2.rendering.interfaces.entity.IEntityTracker;
 
 public interface IEntityManager<ET extends IEntityTracker> {
+	
+	/**
+	 * The internal ID counter. If an Entity is spawned, the Tracker will request an ID, either 
+	 * from this AtomicInteger, or a List of Integers of past used ID's, if the Manager has such 
+	 * a List implemented.
+	 */
+	public static final AtomicInteger ids = new AtomicInteger(1);
 	
 	/**
 	 * Get the default Entity Tracker the Entity Manager provides.
@@ -42,5 +53,22 @@ public interface IEntityManager<ET extends IEntityTracker> {
 	 */
 	public boolean removeEntityTracker(final String name);
 	
+	/**
+	 * Gets all Entities across all Trackers. Depending on how many trackers this Manager manages, this 
+	 * Collection could be huge. It is recommended to use {@link getAllEntitiesByClass(Class class)} 
+	 * instead.
+	 * 
+	 * @return the Collection of every Entity across every tracker
+	 */
+	public Collection<IEntity> getAllEntities();
 	
+	/**
+	 * Gets all Entities across all Trackers that either extend or implement the class supplied. 
+	 * Depending on how many Trackers this Manager manages, this Collection could be huge. If no Entities 
+	 * extend or implement the supplied class, null will be returned
+	 * 
+	 * @param clazz The class to be checked against
+	 * @return the Collection of Entities that extend the Class provided, or null for no Entities found
+	 */
+	public Collection<IEntity> getAllEntitiesByClass(Class<? extends IEntity> clazz);
 }

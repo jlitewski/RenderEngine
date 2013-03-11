@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.Set;
 import javax.sound.sampled.AudioFormat;
 
-import com.hackhalo2.rendering.RenderLogger;
+import com.hackhalo2.rendering.Dashboard;
 
 /**
  * The SoundSystem class is the core class for the SoundSystem library. It is
@@ -73,7 +73,7 @@ public class SoundSystem {
 	/**
 	 * Processes status messages, warnings, and error messages.
 	 */
-	protected RenderLogger logger = SoundSystemConfig.getLogger();
+	protected Dashboard logger = SoundSystemConfig.getLogger();
 
 	/**
 	 * Handle to the active sound library.
@@ -2940,7 +2940,7 @@ public class SoundSystem {
 	 */
 	public static boolean libraryCompatible(Class<? extends Library> libraryClass) {
 		// create the message logger:
-		RenderLogger logger = SoundSystemConfig.getLogger();
+		Dashboard logger = SoundSystemConfig.getLogger();
 		logger.debug("", 0);
 		logger.debug("Checking if "
 				+ SoundSystemConfig.getLibraryTitle(libraryClass)
