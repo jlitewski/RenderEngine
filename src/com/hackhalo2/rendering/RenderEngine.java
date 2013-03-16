@@ -27,7 +27,7 @@ import com.hackhalo2.rendering.util.VBOContainer;
 import com.hackhalo2.rendering.util.VBOContainer.ContainerType;
 
 public class RenderEngine {
-	
+
 	private IChassis chassis = null;
 	private Dashboard log = new Dashboard();
 	public static final boolean _debug = true;
@@ -37,14 +37,15 @@ public class RenderEngine {
 	private int glClearBit = 0;
 	private boolean vboEnabled = false, colorEnabled = false, normalEnabled = false;
 	private Color clearColor = new Color(Color.BLACK);
-	private final byte floppeldidoppelin = 0;
+	private final byte floppeldidoppelin = 0; //Bipity Boopity
 	private static boolean running = false;
 	private boolean wireframe = false, culling = false;
+	private int delta = RenderUtils.getDelta();
 
 	private int cullingMode = GL11.GL_BACK;
 
 	protected RenderEngine(IChassis chassis) {
-		this.log.debug("Debug Mode enabled", 0);
+		this.log.debug("Debug Mode: "+_debug, 0);
 		//Initialize the pluggable map
 		for(Priority priority : Priority.values()) {
 			TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
@@ -64,11 +65,14 @@ public class RenderEngine {
 	public void start() {
 		this.log.info("loop", "Initializing the RenderEngine...", 0);
 
+		//The Iterators used for the mess of code down there
 		Iterator<Pair<Method, IPluggable>> it1;
 		Iterator<VBOContainer> it2;
 
 		running = true;
 		while(!Display.isCloseRequested() && !RenderUtils.error) {
+			this.delta = RenderUtils.getDelta(); //Refresh the delta
+
 			GL11.glClearColor(this.clearColor.getRed(), this.clearColor.getGreen(), this.clearColor.getBlue(), this.clearColor.getAlpha());
 
 			//Clear the bits set to be cleared
@@ -76,7 +80,6 @@ public class RenderEngine {
 
 			for(Priority priority : Priority.values()) {
 				TreeMap<PlugMode, HashSet<Pair<Method, IPluggable>>> map = this.pluggableMap.get(priority);
-				if(map.isEmpty()) continue; //Skip processing this Priority Level if the Map is empty
 				for(PlugMode mode : PlugMode.getAllModes()) {
 					HashSet<Pair<Method, IPluggable>> set = map.get(mode);
 					if(set.isEmpty()) continue; //Skip processing this PlugMode if the Set is empty
@@ -103,7 +106,6 @@ public class RenderEngine {
 								break;
 
 							case PRE_RENDER:
-
 								if(pair.getSecond() instanceof RenderPluggable) {
 									RenderPluggable rPlug = (RenderPluggable)pair.getSecond();
 									if(rPlug.isDirty()) pair.getFirst().invoke(pair.getSecond(), this.chassis);
@@ -189,7 +191,7 @@ public class RenderEngine {
 		this.log.info("loop", "RenderEngine has shut down!", 0);
 		running = false;
 	}
-	
+
 	//Plug Functions
 	//XXX Better API functions for this?
 	public void setPlugEnabled(String name, boolean enabled) {
@@ -318,6 +320,15 @@ public class RenderEngine {
 	/* Other Functions */
 	public byte getFloppeldidoppelin() {
 		return this.floppeldidoppelin;
+	}
+	
+	/*
+	 * Even though RenderUtils has a getDelta() method, it will reset the internal frame counter
+	 * each time it is called, resulting in vastly different delta's per call. This method only updates the
+	 * Delta per tick, which is what things want.
+	 */
+	public int getDelta() {
+		return this.delta;
 	}
 
 	public void setClearColor(Color color) {

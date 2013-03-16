@@ -29,7 +29,7 @@ public class StillCamera extends Camera {
 	}
 
 	@Override
-	public void generateMatrices() { }
+	public void generateMatrices(int delta) { }
 
 	@Override
 	public void applyMatrices() { }

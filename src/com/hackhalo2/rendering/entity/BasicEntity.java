@@ -1,15 +1,24 @@
-package com.hackhalo2.rendering.builtin.entity;
+package com.hackhalo2.rendering.entity;
 
 import org.lwjgl.util.vector.Vector3f;
 
 import com.hackhalo2.rendering.interfaces.entity.IEntity;
 
-public class BasicEntity implements IEntity {
+public abstract class BasicEntity implements IEntity {
 	
 	private String entityName = "Entity";
 	private int ueid = -1; //-1 is "no UEID"
+	private boolean dead;
 	
-	public BasicEntity() { }
+	/*
+	 * Now, we use a Vector3f as a standard, even if the Entity isn't a 3D one. The reasoning behind this is
+	 * simple: we could use the unused variable as a couple of bytes of data storage.
+	 */
+	private Vector3f position = new Vector3f(0,0,0);
+	
+	public BasicEntity() {
+		this.dead = false;
+	}
 
 	@Override
 	public int getUEID() {
@@ -24,8 +33,17 @@ public class BasicEntity implements IEntity {
 
 	@Override
 	public Vector3f getPosition() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.position;
+	}
+	
+	@Override
+	public void setPosition(Vector3f position) {
+		
+	}
+	
+	@Override
+	public boolean isDead() {
+		return this.dead;
 	}
 
 	@Override

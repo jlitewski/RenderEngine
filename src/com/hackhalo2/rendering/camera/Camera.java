@@ -97,7 +97,7 @@ public abstract class Camera implements ICamera {
 	}
 
 	@Override
-	public abstract void generateMatrices();
+	public abstract void generateMatrices(final int delta);
 
 	@Override
 	public abstract void applyMatrices();

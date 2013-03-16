@@ -100,8 +100,9 @@ public class CameraManager implements IManager, IPluggable {
 	@Override
 	@Execute
 	public void preLogic(IChassis chassis) {
-		if(this.camera != null) this.camera.generateMatrices(); //Generate the primary camera matrices
-
+		//Generate the primary camera matrices
+		if(this.camera != null) this.camera.generateMatrices(chassis.getRenderEngine().getDelta());
+		
 		Iterator<GUIElement> it = this.guiElements.values().iterator();
 		while(it.hasNext()) {
 			GUIElement element = it.next();

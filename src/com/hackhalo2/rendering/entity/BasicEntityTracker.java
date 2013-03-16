@@ -1,11 +1,19 @@
-package com.hackhalo2.rendering.builtin.entity;
+package com.hackhalo2.rendering.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.hackhalo2.rendering.interfaces.entity.IEntity;
 import com.hackhalo2.rendering.interfaces.entity.IEntityTracker;
 
 public class BasicEntityTracker implements IEntityTracker {
+	
+	private List<IEntity> trackingEntities;
+	
+	public BasicEntityTracker() {
+		this.trackingEntities = new ArrayList<IEntity>();
+	}
 
 	@Override
 	public boolean addEntityTracking(IEntity entity) {
@@ -21,14 +29,21 @@ public class BasicEntityTracker implements IEntityTracker {
 
 	@Override
 	public void updateTrackedEntities() {
-		// TODO Auto-generated method stub
-		
+		List<IEntity> remove = new ArrayList<IEntity>();
+		for(IEntity entity : this.trackingEntities) {
+			//Death check
+			if(entity.isDead()) {
+				remove.add(entity);
+				continue;
+			}
+			
+			//TODO: this
+		}
 	}
 
 	@Override
 	public Collection<IEntity> getEntities() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.trackingEntities;
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class RenderUtils {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
 
-	public static int getDelta() {
+	protected static int getDelta() {
 		long time = getTime();
 		int delta = (int)(time-lastFrame);
 		lastFrame = time;
@@ -53,7 +53,6 @@ public class RenderUtils {
 
 	public static void updateFPS() {
 		if (getTime() - lastFPS > 1000) {
-			//Display.setTitle(Display.getTitle()+": "+counter+" FPS");
 			counter = 0;
 			lastFPS += 1000;
 		}

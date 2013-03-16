@@ -11,7 +11,7 @@ public interface ICamera {
 	public float getAspectRatio();
 	public float getFOV();
 	
-	public void generateMatrices();
+	public void generateMatrices(final int delta);
 	public void applyMatrices();
 	
 	public void setPosition(Vector3f position);

@@ -11,7 +11,6 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.hackhalo2.rendering.KeyboardBuffer;
-import com.hackhalo2.rendering.RenderUtils;
 
 import static java.lang.Math.*;
 
@@ -75,7 +74,7 @@ public class EulerCamera extends Camera {
 	}
 
 	@Override
-	public void generateMatrices() {
+	public void generateMatrices(int delta) {
 		//Local Keyboard variables
 		boolean keyUp     = this.kb.getState(Keyboard.KEY_W);
 		boolean keyDown   = this.kb.getState(Keyboard.KEY_S);
@@ -86,7 +85,6 @@ public class EulerCamera extends Camera {
 		boolean grabMouse = this.kb.getState(Keyboard.KEY_ESCAPE);
 
 		//float yaw = this.rotation.getYaw(), pitch = this.rotation.getPitch();
-		int delta = RenderUtils.getDelta();
 
 		//Process Mouse Movements
 		if(Mouse.isGrabbed()) { //Make sure the Mouse is grabbed before processing Mouse Events

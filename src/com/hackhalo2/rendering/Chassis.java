@@ -1,20 +1,22 @@
 package com.hackhalo2.rendering;
 
 import com.hackhalo2.rendering.builtin.MIDISoundSystem;
-import com.hackhalo2.rendering.builtin.entity.BasicEntityManager;
+import com.hackhalo2.rendering.entity.BasicEntityManager;
 import com.hackhalo2.rendering.interfaces.core.IChassis;
 import com.hackhalo2.rendering.interfaces.core.IEntityManager;
 import com.hackhalo2.rendering.interfaces.core.IManager;
 import com.hackhalo2.rendering.interfaces.core.INetworkManager;
+import com.hackhalo2.rendering.interfaces.core.IPluggable;
 import com.hackhalo2.rendering.interfaces.core.ISettingsManager;
 import com.hackhalo2.rendering.interfaces.core.ISoundSystem;
 import com.hackhalo2.rendering.interfaces.core.IThreadManager;
+import com.hackhalo2.rendering.interfaces.entity.IEntityTracker;
 
 public class Chassis implements IChassis {
 	
 	//The customizable systems
 	private ISoundSystem soundSystem = null;
-	private IEntityManager entityManager = null;
+	private IEntityManager<? extends IEntityTracker> entityManager = null;
 	private INetworkManager networkManager = null;
 	private ISettingsManager settingsManager = null;
 	private IThreadManager threadManager = null;
@@ -45,13 +47,16 @@ public class Chassis implements IChassis {
 	}
 
 	@Override
-	public void setEntityManager(IEntityManager entityManager) {
-		if(!this.finalized) this.entityManager = entityManager;
+	public void setEntityManager(IEntityManager<? extends IEntityTracker> entityManager) {
+		if(!this.finalized) {
+			if(entityManager instanceof IPluggable) this.entityManager = entityManager;
+			else throw new UnsupportedOperationException("The EntityManager does not implement IPluggable!");
+		}
 		else throw new UnsupportedOperationException("The Chassis has been finalized, you cannot swap systems now");
 	}
 
 	@Override
-	public IEntityManager getEntityManager() {
+	public IEntityManager<? extends IEntityTracker> getEntityManager() {
 		return this.entityManager;
 	}
 
@@ -126,6 +131,7 @@ public class Chassis implements IChassis {
 		//Register things with the RenderEngine
 		this.renderEngine.register(this.cameraManager);
 		this.renderEngine.register(this.keyboardBuffer);
+		this.renderEngine.register(((IPluggable)this.entityManager));
 	}
 
 	@Override
@@ -135,6 +141,8 @@ public class Chassis implements IChassis {
 		this.eventBus.cleanup();
 		this.keyboardBuffer.cleanup();
 		this.cameraManager.cleanup();
+		
+		if(this.entityManager instanceof IManager) ((IManager)this.entityManager).cleanup();
 	}
 
 }
