@@ -1,4 +1,6 @@
 .project
 .classpath
+.settings/*
 bin/*
 src/com/hackhalo2/sandbox/*
+/bin
